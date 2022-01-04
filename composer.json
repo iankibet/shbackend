@@ -1,0 +1,26 @@
+{
+    "name": "shara/framework",
+    "description": "shara backend framework",
+    "require": {
+        "jenssegers/agent": "^2.6"
+    },
+    "authors": [
+        {
+            "name": "Hosea Kibet",
+            "email": "kibethosea8@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Shara\\Framework\\": "src"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Shara\\Framework\\SharaServiceProvider"
+            ]
+        }
+    }
+}
