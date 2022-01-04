@@ -1,0 +1,12 @@
+{
+    "tasks": {
+        "main": "tasks",
+        "roles": ["client"],
+        "childPermissions": {
+            "add": {
+                "main": "store",
+                "roles": ["client"]
+            }
+        }
+    }
+}

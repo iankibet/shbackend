@@ -1,0 +1,7 @@
+<?php
+$controller = {controller_class};
+Route::post('/store',[$controller,'store{umodel}']);
+Route::get('/list/self',[$controller,'listSelf{umodels}']);
+Route::get('/list/any',[$controller,'listAny{umodels}']);
+Route::get('/get/any/{id}',[$controller,'getAny{umodel}']);
+Route::get('/get/self/{id}',[$controller,'get{umodel}']);

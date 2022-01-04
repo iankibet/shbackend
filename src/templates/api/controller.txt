@@ -1,0 +1,61 @@
+
+     public function __construct()
+        {
+            $this->api_model = {umodel}::class;
+        }
+        public function store{umodel}(){
+            $data = \request()->all();
+            $valid = Validator::make($data,$this->getValidationFields());
+            if (count($valid->errors())) {
+                return response([
+                    'status' => 'failed',
+                    'errors' => $valid->errors()
+                ], 422);
+            }
+            $data['form_model'] = encrypt($this->api_model);
+            $data['user_id'] = \request()->user()->id;
+            ${model} = $this->autoSaveModel($data);
+            return [
+              'status'=>'success',
+              '{model}'=>${model}
+            ];
+        }
+
+        public function listSelf{umodel}s(){
+            $user = \request()->user();
+            ${model}s = {umodel}::where('user_id',$user->id);
+            $table = '{model}s';
+            $search_keys = array_keys($this->getValidationFields());
+            return[
+                'status'=>'success',
+                'data'=>SearchRepo::of(${model}s,$table,$search_keys)
+                    ->make(true)
+            ];
+        }
+
+        public function listAny{umodel}s(){
+            ${model}s = new {umodel}();
+            $table = '{model}s';
+            $search_keys = array_keys($this->getValidationFields());
+            return[
+                'status'=>'success',
+                'data'=>SearchRepo::of(${model}s,$table,$search_keys)
+                    ->make(true)
+            ];
+        }
+
+        public function getAny{umodel}($id){
+            ${model} = {umodel}::find($id);
+            return [
+                'status'=>'success',
+                '{model}'=>${model}
+            ];
+        }
+         public function getSelf{umodel}($id){
+            $user = \request()->user();
+            ${model} = {umodel}::where('user_id',$user->id)->find($id);
+            return [
+                'status'=>'success',
+                '{model}'=>${model}
+            ];
+        }
