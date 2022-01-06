@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 use Shara\Framework\App\Commands\AutoGenerateModel;
 use Shara\Framework\App\Commands\BackupDatabase;
+use Shara\Framework\App\Commands\Initialize;
 use Shara\Framework\App\Commands\MakeApiEndPoint;
 use Shara\Framework\App\Http\Middleware\ShAuth;
 
@@ -33,7 +34,8 @@ class SharaServiceProvider extends ServiceProvider
             $this->commands([
                 AutoGenerateModel::class,
                 BackupDatabase::class,
-                MakeApiEndPoint::class
+                MakeApiEndPoint::class,
+                Initialize::class,
             ]);
         }
         $router = $this->app->make(Router::class);
