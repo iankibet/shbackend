@@ -60,10 +60,13 @@ class Initialize extends Command
             exec($command2);
             $this->info("Copied default models");
         }
-        if(!file_exists(!file_exists($controllers_dir.'/Api/Auth/AuthController.php'))) {
-            $fileContents = file_get_contents(__DIR__.'/../../templates/AuthController.txt');
-            file_put_contents($controllers_dir.'/Api/Auth/AuthController.php',$fileContents);
-            $this->info("Created auth controller");
+        $migrations_dir = str_replace('/app','/',$app_dir).'database/migrations';
+        if(!file_exists($migrations_dir.'/2020_06_06_012829_create_log_types_table.php')){
+            $command = 'cp -r '.__DIR__.'/../Migrations/* '.$migrations_dir.'/';
+            exec($command);
+            $this->info("Copied default migrations");
+        } else {
+            $this->warn('Migrations exist already');
         }
         return Command::SUCCESS;
     }
