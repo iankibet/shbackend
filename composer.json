@@ -1,7 +1,7 @@
 {
     "name": "shara/framework",
     "description": "shara backend framework",
-    "version": "1.0.3",
+    "version": "1.0.7",
     "require": {
         "jenssegers/agent": "^2.6"
     },

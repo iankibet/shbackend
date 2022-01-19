@@ -42,6 +42,8 @@ class Initialize extends Command
         $routes_dir = str_replace('/app-','/routes/api',$routes_dir);
         if(!file_exists($routes_dir)) {
             mkdir($routes_dir);
+            $copyCommand = 'cp -r '.__DIR__.'/../Routes/admin '.$routes_dir.'/';
+            exec($copyCommand);
             $this->info("success");
         } else {
             $this->info("Exists already!");
