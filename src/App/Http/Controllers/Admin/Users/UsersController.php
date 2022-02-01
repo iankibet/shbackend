@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Admin\Users;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\ReUpdateAffiliateReports;
-use App\Jobs\UpdateAgentListings;
 use App\Models\Core\ApprovedAccount;
 use App\Models\Core\FreeTier;
 use App\Models\Core\HouseRequest;
@@ -12,15 +11,12 @@ use App\Models\Core\Log;
 use App\Models\Core\Property;
 use App\Models\Core\TmpFile;
 use App\Models\Core\UploadedDocument;
-use App\Repositories\StatusRepository;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-
 use App\Models\User;
 use App\Repositories\SearchRepo;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Schema;
+use Shara\Framework\App\Repositories\StatusRepository;
 
 class UsersController extends Controller
 {

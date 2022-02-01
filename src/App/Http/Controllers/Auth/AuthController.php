@@ -322,4 +322,46 @@ class AuthController extends Controller
             'message'=>'Otp verified successfully'
         ];
     }
+
+    public function listNotifications($status=null){
+        $user = request()->user();
+        if($status == 'count'){
+            return [
+                'unread'=>$user->unreadNotifications()->count(),
+                'read'=>$user->readNotifications()->count()
+            ];
+        }
+        if($status == 'unread') {
+            $notifications = $user->unreadNotifications();
+        } else {
+            $notifications = $user->readNotifications();
+        }
+        $results = SearchRepo::of($notifications,'notifications', ['data'])
+            ->make();
+        return [
+            'status'=>'success',
+            'data'=>$results
+        ];
+    }
+    public function readAllNotifications() {
+        $user = request()->user();
+        $user->unreadNotifications()->update([
+            'read_at'=>now()
+        ]);
+        storeLog('read_notifications', 'Marked all notifications read');
+        return [
+            'status'=>'success',
+            'message'=>'Notifications marked read'
+        ];
+    }
+    public function markNotificationRead($id){
+        $user = request()->user();
+        $notification = $user->notifications()->find($id);
+        $notification->read_at = now();
+        $notification->update();
+        return [
+            'status'=>'success',
+            'data'=>$notification
+        ];
+    }
 }

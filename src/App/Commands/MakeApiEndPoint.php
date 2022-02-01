@@ -14,7 +14,7 @@ class MakeApiEndPoint extends Command
      *
      * @var string
      */
-    protected $signature = 'shara:make-endpoint';
+    protected $signature = 'sh:make-endpoint';
 
     /**
      * The console command description.

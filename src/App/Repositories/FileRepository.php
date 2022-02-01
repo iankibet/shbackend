@@ -7,7 +7,6 @@
  */
 
 namespace Shara\Framework\App\Repositories;
-use App\Repositories\LogsRepository;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Storage;

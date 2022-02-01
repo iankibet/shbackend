@@ -15,7 +15,7 @@ class AutoGenerateModel extends Command
      *
      * @var string
      */
-    protected $signature = 'shara:make-model {model_name}';
+    protected $signature = 'sh:make-model {model_name}';
 
     /**
      * The console command description.

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::group(['middleware' => ['auth:api'], 'prefix'=>'api'], function () {
+Route::group(['middleware' => ['api'], 'prefix'=>'api'], function () {
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
     Route::post('auth/login',[$apiAuthController,'login']);
     Route::post('auth/register',[$apiAuthController,'registerAgent']);
@@ -22,6 +22,14 @@ Route::group(['middleware' => ['auth:api'], 'prefix'=>'api'], function () {
     Route::post('auth/register',[$apiAuthController,'register']);
 });
 Route::group(['middleware' => ['auth:api','sh_auth'], 'prefix'=>'api'], function () {
+    $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
+    Route::post('auth/notifications/read-all',[$apiAuthController,'readAllNotifications']);
+    Route::get('auth/notifications/{status}',[$apiAuthController,'listNotifications']);
+    Route::post('auth/notifications/mark-read/{id}',[$apiAuthController,'markNotificationRead']);
+    Route::post('auth/user',[$apiAuthController,'updateProfile']);
+    Route::post('auth/request-otp',[$apiAuthController,'requestOtp']);
+    Route::post('auth/verify-otp',[$apiAuthController,'verifyOtp']);
+    Route::get('auth/user',[$apiAuthController,'getUser']);
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
     $routes_path = base_path('routes/api');
     if(file_exists($routes_path)) {

@@ -16,7 +16,7 @@ class BackupDatabase extends Command
      *
      * @var string
      */
-    protected $signature = 'shara:backup-database {disk=backup}';
+    protected $signature = 'sh:backup-database {disk=backup}';
 
     /**
      * The console command description.
