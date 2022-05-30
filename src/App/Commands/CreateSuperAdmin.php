@@ -70,6 +70,7 @@ class CreateSuperAdmin extends Command
                 ])
             ]);
         }
+        $user->role = 'admin';
         $user->department_id = $department->id;
         $user->update();
         return 0;
