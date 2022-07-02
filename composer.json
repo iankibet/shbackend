@@ -1,5 +1,5 @@
 {
-    "name": "shara/framework",
+    "name": "iankibet/shbackend",
     "description": "shara backend framework",
     "version": "1.0.3",
     "require": {
@@ -13,14 +13,14 @@
     ],
     "autoload": {
         "psr-4": {
-            "Shara\\Framework\\": "src"
+            "Iankibet\\Shbackend\\": "src"
         }
     },
     "minimum-stability": "stable",
     "extra": {
         "laravel": {
             "providers": [
-                "Shara\\Framework\\SharaServiceProvider"
+                "Iankibet\\Shbackend\\SharaServiceProvider"
             ]
         }
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Shara\Framework\App\Commands;
+namespace Iankibet\Shbackend\App\Commands;
 
 use Illuminate\Console\Command;
 

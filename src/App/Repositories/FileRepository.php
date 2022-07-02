@@ -6,7 +6,7 @@
  * Time: 8:13 AM
  */
 
-namespace Shara\Framework\App\Repositories;
+namespace Iankibet\Shbackend\App\Repositories;
 use App\Repositories\LogsRepository;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
