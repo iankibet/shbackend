@@ -1,6 +1,6 @@
 <?php
 
-namespace Shara\Framework\App\Commands;
+namespace Iankibet\Shbackend\App\Commands;
 
 use App\Models\Core\Department;
 use App\Models\Core\DepartmentPermission;

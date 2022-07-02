@@ -4,20 +4,14 @@ namespace Iankibet\Shbackend;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
-<<<<<<< HEAD
-use Shara\Framework\App\Commands\AutoGenerateModel;
-use Shara\Framework\App\Commands\BackupDatabase;
-use Shara\Framework\App\Commands\CreateSuperAdmin;
-use Shara\Framework\App\Commands\Initialize;
-use Shara\Framework\App\Commands\MakeApiEndPoint;
-use Shara\Framework\App\Http\Middleware\ShAuth;
-=======
+
 use Iankibet\Shbackend\App\Commands\AutoGenerateModel;
 use Iankibet\Shbackend\App\Commands\BackupDatabase;
 use Iankibet\Shbackend\App\Commands\Initialize;
 use Iankibet\Shbackend\App\Commands\MakeApiEndPoint;
 use Iankibet\Shbackend\App\Http\Middleware\ShAuth;
->>>>>>> main
+use Iankibet\Shbackend\App\Commands\CreateSuperAdmin;
+
 
 
 class SharaServiceProvider extends ServiceProvider
