@@ -6,14 +6,14 @@
  * Time: 7:47 AM
  */
 
-namespace Shara\Framework\App\Repositories;
+namespace Iankibet\Shbackend\App\Repositories;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
-use Shara\Framework\Repositories\UserGroup;
+use Iankibet\Shbackend\Repositories\UserGroup;
 
 class RoleRepository
 {

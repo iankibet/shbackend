@@ -1,9 +1,9 @@
 <?php
 
-namespace Shara\Framework\App\Http\Middleware;
+namespace Iankibet\Shbackend\App\Http\Middleware;
 
 
-use Shara\Framework\App\Repositories\RoleRepository;
+use Iankibet\Shbackend\App\Repositories\RoleRepository;
 use Closure;
 use Illuminate\Routing\Router;
 

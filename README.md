@@ -1,2 +1,7 @@
 # backend-framework
-## Recently upgraded
+
+## Installation
+
+```shell
+composer require iankibet/shbackend
+```
