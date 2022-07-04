@@ -21,7 +21,7 @@ Route::group(['middleware' => ['api'], 'prefix'=>'api'], function () {
     Route::post('auth/forgot',[$apiAuthController,'forgotPassword']);
     Route::post('auth/register',[$apiAuthController,'register']);
 });
-Route::group(['middleware' => ['auth:api','sh_auth'], 'prefix'=>'api'], function () {
+Route::group(['middleware' => ['auth:sanctum','sh_auth'], 'prefix'=>'api'], function () {
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
     Route::post('auth/notifications/read-all',[$apiAuthController,'readAllNotifications']);
     Route::get('auth/notifications/{status}',[$apiAuthController,'listNotifications']);
