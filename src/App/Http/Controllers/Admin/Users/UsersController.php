@@ -3,29 +3,13 @@
 namespace App\Http\Controllers\Api\Admin\Users;
 
 use App\Http\Controllers\Controller;
-<<<<<<< HEAD
-use App\Jobs\ReUpdateAffiliateReports;
-use App\Models\Core\ApprovedAccount;
-use App\Models\Core\FreeTier;
-use App\Models\Core\HouseRequest;
-use App\Models\Core\Log;
-use App\Models\Core\Property;
-use App\Models\Core\TmpFile;
-use App\Models\Core\UploadedDocument;
-use App\Models\User;
-use App\Repositories\SearchRepo;
-use Carbon\Carbon;
-=======
 use App\Models\Core\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
 use App\Models\User;
 use Iankibet\Shbackend\App\Repositories\SearchRepo;
->>>>>>> main
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Shara\Framework\App\Repositories\StatusRepository;
 
 class UsersController extends Controller
 {

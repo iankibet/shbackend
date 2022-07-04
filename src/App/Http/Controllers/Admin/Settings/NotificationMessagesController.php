@@ -6,13 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Core\NotificationMessage;
-use App\Repositories\SearchRepo;
+use Iankibet\Shbackend\App\Repositories\SearchRepo;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Schema;
 
 class NotificationMessagesController extends Controller
 {
-    
+
      public function __construct()
         {
             $this->api_model = NotificationMessage::class;

@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Api\Admin\Activitieslogs;
 
 use App\Http\Controllers\Controller;
-use App\Models\Core\HouseRequest;
 use App\Models\Core\Log;
-use App\Models\Core\PropertyPayment;
 use App\Models\User;
-use App\Repositories\SearchRepo;
+use Iankibet\Shbackend\App\Repositories\SearchRepo;
 use Illuminate\Http\Request;
 use phpDocumentor\Reflection\DocBlock\Tags\Property;
 

@@ -7,7 +7,7 @@ use App\Repositories\RoleRepository;
 use Illuminate\Http\Request;
 
 use App\Models\Core\Department;
-use App\Repositories\SearchRepo;
+use Iankibet\Shbackend\App\Repositories\SearchRepo;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Schema;
 

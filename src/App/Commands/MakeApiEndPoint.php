@@ -127,7 +127,7 @@ class MakeApiEndPoint extends Command
         $new_content = file_get_contents($this->controllerTemplatePath);
         $new_content = $this->replaceVars($new_content);
         $new_controller = str_replace('//',$new_content,$content);
-        $use_content = 'use App\\Models\\'.str_replace('/','\\',$this->real_model).";\nuse App\Repositories\SearchRepo;\nuse Illuminate\Support\Facades\Validator;\nuse Illuminate\Support\Facades\Schema;\n\nclass";
+        $use_content = 'use App\\Models\\'.str_replace('/','\\',$this->real_model).";\nuse Iankibet\Shbackend\App\Repositories\SearchRepo;\nuse Illuminate\Support\Facades\Validator;\nuse Illuminate\Support\Facades\Schema;\n\nclass";
         $new_controller = $this->replace_first('class',$use_content,$new_controller);
         file_put_contents($path,$new_controller);
     }
