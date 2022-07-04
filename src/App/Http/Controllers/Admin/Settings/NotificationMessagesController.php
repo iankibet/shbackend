@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Schema;
 
 class NotificationMessagesController extends Controller
 {
-
+    
      public function __construct()
         {
             $this->api_model = NotificationMessage::class;

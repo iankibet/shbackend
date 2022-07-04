@@ -1,0 +1,19 @@
+{
+  "main": "/auth",
+  "roles": ["member","admin"],
+  "urls": [
+    "/files/tmp",
+    "/auth/freetier",
+    "/users/user/notificationsettings/notificationsetting",
+    "/users/user/notificationsettings",
+    "/users/user/notificationsettings/system_updates",
+    "/auth/notifications",
+    "/auth/notifications/mark-read",
+    "/aguth/notifications/read-all",
+    "/auth/agent-type",
+    "/auth/company-details",
+    "/auth/request-otp",
+    "/auth/verify-otp",
+    "/user/apikeys/list"
+  ]
+}

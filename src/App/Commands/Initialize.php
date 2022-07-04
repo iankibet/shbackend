@@ -70,6 +70,13 @@ class Initialize extends Command
         } else {
             $this->warn('Migrations exist already');
         }
+        if(!file_exists(storage_path('app/permissions/modules/common.json'))){
+            $command = 'cp -r '.__DIR__.'/../permissions '.storage_path('app').'/';
+            exec($command);
+            $this->info("Copied default permissions");
+        } else {
+            $this->warn('Permissions exist already');
+        }
 //        $repositories_dir = str_replace('/app','/',$app_dir).'app/Repositories';
 //        if(!file_exists($repositories_dir.'/helperrepo.php')){
 //            if(!file_exists($repositories_dir)){

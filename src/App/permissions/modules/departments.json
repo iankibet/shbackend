@@ -1,0 +1,43 @@
+{
+  "main": "/admin/departments",
+  "roles": [
+    "admin"
+  ],
+  "urls": [
+    "/auth/notifications"
+  ],
+  "children": {
+    "add": {
+      "main": "store",
+      "roles": [
+        "admin"
+      ],
+      "urls": [
+        "/admin/departments/permissions",
+        "/admin/departments/all-permissions",
+          "/admin/departments/department/delete-department/"
+      ]
+    },
+    "list_departments": {
+      "main": "list",
+      "roles": [
+        "admin"
+      ]
+    },
+    "view_department": {
+      "main": "department",
+      "roles": ["admin"],
+      "urls": ["list-pending-modules","get-module-permissions","permissions"],
+      "children": {
+        "add_module": {
+          "main": "add-module",
+          "roles": ["admin"]
+        },
+        "list_modules": {
+          "main": "list-modules",
+          "roles": ["admin"]
+        }
+      }
+    }
+  }
+}

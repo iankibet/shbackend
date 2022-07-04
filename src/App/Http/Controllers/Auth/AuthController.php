@@ -14,7 +14,7 @@ use App\Models\User;
 use App\Notifications\InviteMember;
 use App\Notifications\SendSms;
 use App\Notifications\verifyPhone;
-use App\Repositories\RoleRepository;
+use Iankibet\Shbackend\App\Repositories\RoleRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;

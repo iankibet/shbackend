@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api\Admin\Departments;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\RoleRepository;
+use Iankibet\Shbackend\App\Repositories\RoleRepository;
+use Iankibet\Shbackend\App\Repositories\ShRepository;
 use Illuminate\Http\Request;
 
 use App\Models\Core\Department;
@@ -28,9 +29,15 @@ class DepartmentsController extends Controller
                 ], 422);
             }
             $data['form_model'] = encrypt($this->api_model);
-            // $data['user_id'] = \request()->user()->id;
-            $data['id'] = $id;
             $department = $this->autoSaveModel($data);
+            if($id){
+                $data['id'] = $id;
+            }
+            if(isset($data['id']) && $data['id'] > 0) {
+                ShRepository::storeLog('updated_department',"Updated department # $department->id $department->name", $department);
+            } else {
+                ShRepository::storeLog("created_department","Created new department #$department->id $department->name",$department);
+            }
             return [
               'status'=>'success',
               'department'=>$department
@@ -53,6 +60,7 @@ class DepartmentsController extends Controller
             $department = Department::find($id);
             $department->permissions = request('permissions');
             $department->save();
+            ShRepository::storeLog("update_department_permissions", "Updated department permissions for department#$department->id $department->name",$department);
             return [
                  'status'=>'success',
                  'department'=>$department
@@ -61,8 +69,7 @@ class DepartmentsController extends Controller
 
         public function getDepartment($id){
             $user = \request()->user();
-    //        $department = Department::find($id);
-            $department = Department::where('user_id',$user->id)->find($id);
+            $department = Department::find($id);
             return [
                 'status'=>'success',
                 'department'=>$department

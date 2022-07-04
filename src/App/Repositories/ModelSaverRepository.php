@@ -6,7 +6,7 @@
  * Time: 9:01 AM
  */
 
-namespace Shara\Framework\Iankibet\Shbackend\App\Repositories;
+namespace Iankibet\Shbackend\App\Repositories;
 
 
 use function bcrypt;
