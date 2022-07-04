@@ -69,7 +69,7 @@ class ErrorExceptionsController extends Controller
             $error->status = 1;
             $error->resolve_message = \request('resolve_message');
             $error->update();
-            storeLog('resolved_error',"Resolved error $error->id with message <strong>$error->resolve_message</strong>");
+            ShRepository::storeLog('resolved_error',"Resolved error $error->id with message <strong>$error->resolve_message</strong>");
             return [
                 'status'=>'success',
                 'message'=>'Resolved successfully',

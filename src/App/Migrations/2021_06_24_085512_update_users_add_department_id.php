@@ -16,6 +16,8 @@ class UpdateUsersAddDepartmentId extends Migration
         Schema::table('users', function (Blueprint $table) {
             //
             $table->integer('department_id')->nullable();
+            $table->enum('role',['admin','member'])->default('member');
+            $table->string('phone')->nullable();
         });
     }
 
@@ -29,6 +31,8 @@ class UpdateUsersAddDepartmentId extends Migration
         Schema::table('users', function (Blueprint $table) {
             //
             $table->dropColumn('department_id');
+            $table->dropColumn('role');
+            $table->dropColumn('phone');
         });
     }
 }

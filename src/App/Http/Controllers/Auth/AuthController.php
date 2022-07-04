@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
+use Iankibet\Shbackend\App\Repositories\ShRepository;
 
 class AuthController extends Controller
 {
@@ -41,7 +42,7 @@ class AuthController extends Controller
         if(Auth::attempt(['email'=>$email,'password'=>$password])){
             $token = request()->user()->createToken('api_token_at_'.now()->toDateTimeString());
             $user= \request()->user();
-            storeLog('user_login',"$user->role($user->name) logged in",$user);
+            ShRepository::storeLog('user_login',"$user->role($user->name) logged in",$user);
             return [
                 'status'=>'success',
                 'token'=>$token->plainTextToken,
@@ -143,7 +144,7 @@ class AuthController extends Controller
             'password'=>Hash::make($password)
         ]);
         $token = $user->createToken('api_token_at_'.now()->toDateTimeString());
-        storeLog('user_registration',"$user->role  <a target='_blank' href='/admin/users/user/$user->id'> $user->name</a> registered",$user);
+        ShRepository::storeLog('user_registration',"$user->role  <a target='_blank' href='/admin/users/user/$user->id'> $user->name</a> registered",$user);
         return [
             'status'=>'success',
             'user'=>$user,
@@ -348,7 +349,7 @@ class AuthController extends Controller
         $user->unreadNotifications()->update([
             'read_at'=>now()
         ]);
-        storeLog('read_notifications', 'Marked all notifications read');
+        ShRepository::storeLog('read_notifications', 'Marked all notifications read');
         return [
             'status'=>'success',
             'message'=>'Notifications marked read'
