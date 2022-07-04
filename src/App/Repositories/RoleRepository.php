@@ -57,10 +57,10 @@ class RoleRepository
             if ($user->department) {
                 $modules = DepartmentPermission::where('department_id',$user->department_id)->get();
                 foreach ($modules as $module){
-                    $urls = @json_decode($module->urls);
-                    if($urls){
-                        $allowed_urls = array_merge($allowed_urls,$urls);
-                    }
+//                    $urls = @json_decode($module->urls);
+//                    if($urls){
+//                        $allowed_urls = array_merge($allowed_urls,$urls);
+//                    }
                     $slugs = @json_decode($module->permissions);
                     if($slugs){
                         $permissions[] = $module->module;
