@@ -6,7 +6,7 @@
  * Time: 7:47 AM
  */
 
-namespace Iankibet\Shbackend\App\Repositories;
+namespace Iankibet\Shbackend\Iankibet\Shbackend\App\Repositories;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;

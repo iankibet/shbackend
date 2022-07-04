@@ -70,17 +70,17 @@ class Initialize extends Command
         } else {
             $this->warn('Migrations exist already');
         }
-        $repositories_dir = str_replace('/app','/',$app_dir).'app/Repositories';
-        if(!file_exists($repositories_dir.'/helperrepo.php')){
-            if(!file_exists($repositories_dir)){
-                exec('mkdir '.$repositories_dir);
-            }
-            $command = 'cp -r '.__DIR__.'/../Repositories/* '.$repositories_dir.'/';
-            exec($command);
-            $this->info("Copied default repositories");
-        } else {
-            $this->warn('Repositories exist already');
-        }
+//        $repositories_dir = str_replace('/app','/',$app_dir).'app/Repositories';
+//        if(!file_exists($repositories_dir.'/helperrepo.php')){
+//            if(!file_exists($repositories_dir)){
+//                exec('mkdir '.$repositories_dir);
+//            }
+//            $command = 'cp -r '.__DIR__.'/../Repositories/* '.$repositories_dir.'/';
+//            exec($command);
+//            $this->info("Copied default repositories");
+//        } else {
+//            $this->warn('Repositories exist already');
+//        }
         return Command::SUCCESS;
     }
 }

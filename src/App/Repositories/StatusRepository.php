@@ -6,7 +6,7 @@
  * Time: 10:16 AM
  */
 
-namespace Shara\Framework\App\Repositories;
+namespace Shara\Framework\Iankibet\Shbackend\App\Repositories;
 
 
 class StatusRepository

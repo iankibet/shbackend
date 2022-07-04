@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories;
+namespace Iankibet\Shbackend\App\Repositories;
 
 
 class GraphStatsRepository

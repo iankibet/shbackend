@@ -6,7 +6,7 @@
  * Time: 1:52 PM
  */
 
-namespace App\Repositories;
+namespace Iankibet\Shbackend\App\Repositories;
 
 use App\User;
 use Carbon\Carbon;

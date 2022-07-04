@@ -6,7 +6,7 @@
  * Time: 6:13 PM
  */
 
-namespace App\Repositories;
+namespace Iankibet\Shbackend\App\Repositories;
 
 
 use App\Models\Core\Log;

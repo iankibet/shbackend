@@ -1,6 +1,6 @@
 <?php
 
-namespace Iankibet\Shbackend\App\Repositories;
+namespace Iankibet\Shbackend\Iankibet\Shbackend\App\Repositories;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;

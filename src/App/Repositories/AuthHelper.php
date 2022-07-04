@@ -6,7 +6,7 @@
  * Time: 6:56 AM
  */
 
-namespace App\Repositories;
+namespace Iankibet\Shbackend\App\Repositories;
 
 
 use App\User;

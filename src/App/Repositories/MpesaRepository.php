@@ -1,5 +1,5 @@
 <?php
-namespace App\Repositories;
+namespace Iankibet\Shbackend\App\Repositories;
 use App\Models\Core\Payment;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;

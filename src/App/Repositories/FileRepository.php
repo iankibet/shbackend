@@ -5,13 +5,8 @@
  * Date: 7/25/18
  * Time: 8:13 AM
  */
-
-<<<<<<< HEAD
-namespace Shara\Framework\App\Repositories;
-=======
-namespace Iankibet\Shbackend\App\Repositories;
+namespace Shara\Framework\Iankibet\Shbackend\App\Repositories;
 use App\Repositories\LogsRepository;
->>>>>>> main
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Storage;
