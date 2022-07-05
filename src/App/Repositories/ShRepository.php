@@ -2,12 +2,53 @@
 
 namespace Iankibet\Shbackend\App\Repositories;
 
+use App\Models\Core\Log;
+use App\Models\User;
+use Jenssegers\Agent\Agent;
 use Monolog\LogRecord;
 
 class ShRepository
 {
- public static function storeLog($slug,$description){
-     LogsRepository::storeLog($slug,$description);
+ public static function storeLog($slug,$log, $model){
+     $agent = new Agent();
+     $os = $agent->platform();
+     $browser = $agent->browser();
+     $ip = self::get_client_ip_env();
+     $device = $os.' - '.$browser;
+     $model_id = null;
+     $model_class = null;
+     if($model){
+         $model_class = get_class($model);
+         $model_id = $model->id;
+     }
+     $user = request()->user();
+     $id = 0;
+     if(!$user && $model_class == \App\Models\User::class) {
+         $user = $model;
+     }
+     if($user){
+         $id = $user->id;
+     }
+     $newLog = Log::create([
+         'user_id'=>$id,
+         'model_id'=>$model_id,
+         'model'=>$model_class,
+         'slug'=>$slug,
+         'log'=>$log,
+         'device'=>$device,
+         'ip_address'=>$ip
+     ]);
+//     event(new NewLog($newLog));
+     $logType = \App\Models\Core\LogType::where('slug','like',$slug)->count();
+     if(!$logType){
+         $name = ucwords(str_replace('_',' ',$slug));
+         \App\Models\Core\LogType::create([
+             'slug'=>$slug,
+             'name'=>$name,
+             'description'=>$name,
+             'user_id'=>0
+         ]);
+     }
  }
     public static function saveModel($data){
         $model_saver = New ModelSaverRepository();
@@ -45,5 +86,23 @@ class ShRepository
         $validation_array['form_model']='';
         unset($validation_array['form_model']);
         return $validation_array;
+    }
+    protected static function get_client_ip_env() {
+        $ipaddress = '';
+        if (getenv('HTTP_CLIENT_IP'))
+            $ipaddress = getenv('HTTP_CLIENT_IP');
+        else if(getenv('HTTP_X_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+        else if(getenv('HTTP_X_FORWARDED'))
+            $ipaddress = getenv('HTTP_X_FORWARDED');
+        else if(getenv('HTTP_FORWARDED_FOR'))
+            $ipaddress = getenv('HTTP_FORWARDED_FOR');
+        else if(getenv('HTTP_FORWARDED'))
+            $ipaddress = getenv('HTTP_FORWARDED');
+        else if(getenv('REMOTE_ADDR'))
+            $ipaddress = getenv('REMOTE_ADDR');
+        else
+            $ipaddress = 'UNKNOWN';
+        return explode(',',$ipaddress)[0];
     }
 }
