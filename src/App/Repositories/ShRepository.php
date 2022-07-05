@@ -9,7 +9,7 @@ use Monolog\LogRecord;
 
 class ShRepository
 {
- public static function storeLog($slug,$log, $model){
+ public static function storeLog($slug,$log, $model=null){
      $agent = new Agent();
      $os = $agent->platform();
      $browser = $agent->browser();
