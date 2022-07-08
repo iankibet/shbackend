@@ -87,6 +87,23 @@ class ShRepository
         unset($validation_array['form_model']);
         return $validation_array;
     }
+    public static function translateStatus($state, $statuses){
+        if (is_numeric($state))
+            $statuses = array_flip($statuses);
+        if(is_array($state)){
+            $states  = [];
+            foreach($state as $st){
+                $states[] = $statuses[$st];
+            }
+
+            return $states;
+        }
+//        dd($statuses);
+        if(isset($statuses[$state])){
+            return $statuses[$state];
+        }
+        throw new \Exception("$state state not found in ".implode(',',array_keys($statuses)));
+    }
     protected static function get_client_ip_env() {
         $ipaddress = '';
         if (getenv('HTTP_CLIENT_IP'))
