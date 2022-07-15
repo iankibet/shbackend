@@ -72,10 +72,18 @@ class ShRepository
             $fillables = $model->getFillable();
         }
         $validation_array =  [];
+        $names = ['name'];
+        $descriptions = ['description'];
+        $emails = ['email'];
+        $numbers = ['age','year','height'];
         foreach($fillables as $field){
-            if($field == 'name'){
+            if(in_array($field, $names)){
                 $validation_array[$field] = 'required|max:255';
-            } else {
+            }else if(in_array($field, $emails)){
+                $validation_array[$field] = 'required|email|max:255';
+            } else if(in_array($field, $descriptions)){
+                $validation_array[$field] = '';
+            }else {
                 $validation_array[$field] = 'required';
             }
         }
