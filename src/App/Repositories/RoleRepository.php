@@ -259,13 +259,12 @@ class RoleRepository
     }
 
     protected function getAllowedUrls(){
+        $permissionsRepo = new PermissionsRepository();
         $allowed_urls = session()->get('allowed_urls',[]);
         $permissions = session()->get('permissions',[]);
-        $memberPermissions = self::getRolePermissions('member');
         $user = $this->user;
-        $allowed_urls = $this->extractFromAllUrls();
-        if(!count($permissions)){
-            $user = $this->user;
+        $role = $user->role;
+        if($role == 'admin'){
             $modules = DepartmentPermission::where('department_id',$user->department_id)->get();
             foreach ($modules as $module){
                 $urls = @json_decode($module->urls);
@@ -280,8 +279,9 @@ class RoleRepository
                     }
                 }
             }
-            session()->put('allowed_urls',$allowed_urls);
-            session()->put('permissions',$permissions);
+           $allowed_urls = $permissionsRepo->getAllowedUrls($permissions);
+        } else {
+            $allowed_urls = $permissionsRepo->getAllowedUrls();
         }
         return $allowed_urls;
     }
