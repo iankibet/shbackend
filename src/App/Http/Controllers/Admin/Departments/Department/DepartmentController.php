@@ -8,6 +8,7 @@ use App\Models\Core\DepartmentPermission;
 use Iankibet\Shbackend\App\Repositories\RoleRepository;
 use Iankibet\Shbackend\App\Repositories\SearchRepo;
 use Couchbase\Role;
+use Iankibet\Shbackend\App\Repositories\ShRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -104,5 +105,16 @@ class DepartmentController extends Controller
             'status'=>'success',
             'module'=>$module
         ];
+    }
+    public function removeModulePermissions($id)
+    {
+        $moduleDepartment = DepartmentPermission::find($id);
+        $department = Department::find($moduleDepartment->department_id);
+        $moduleDepartment->delete();
+        ShRepository::storeLog('remove_department_permission',"Removed permission $moduleDepartment->module from Department#$department->id", $department);
+        return response([
+            'status' => 'success'
+        ]);
+
     }
 }

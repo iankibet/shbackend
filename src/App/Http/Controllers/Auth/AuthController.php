@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Core\AgentListing;
 use App\Models\Core\Company;
+use App\Models\Core\DepartmentPermission;
 use App\Models\Core\HouseRequest;
 use App\Models\Core\InterestedRequest;
 use App\Models\Core\Property;
@@ -153,9 +154,23 @@ class AuthController extends Controller
     }
     public function getUser(){
         $user = request()->user();
-        if($user->role == 'admin'  && $user->department){
-            $permissions = $user->department->permissions;
-            $user->permissions = $permissions;
+        if($user->role == 'admin'  && $user->department_id){
+            $permissions = [];
+            $modules = DepartmentPermission::where('department_id',$user->department_id)->get();
+            foreach ($modules as $module){
+                $mainModule = $module->module;
+                $permissions[] = $mainModule;
+                $modulePermissions = json_decode($module->permissions);
+                if($modulePermissions){
+                    foreach ($modulePermissions as $modulePermission){
+                        if($modulePermission != $mainModule){
+                            $permissions[] = $mainModule.'.'.$modulePermission;
+                        }
+                    }
+                }
+            }
+            $user->permissions = json_encode($permissions);
+
         } elseif($user->role != 'admin'){
             $permissions = RoleRepository::getRolePermissions($user->role);
             $user->permissions = json_encode($permissions);

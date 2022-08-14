@@ -42,8 +42,8 @@ class CreateSuperAdmin extends Command
     public function handle()
     {
         $name = $this->ask('Name','Super Admin');
-        $email = $this->ask('Email','admin@localhost.com');
-        $password = $this->ask('Email','admin@localhost.com');
+        $email = $this->ask('Admin Email','admin@localhost.com');
+        $password = $this->ask('Admin Password','admin@localhost.com');
         $department_id = 0;
         $user = User::create([
            'name'=>$name,

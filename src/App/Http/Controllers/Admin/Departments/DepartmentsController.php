@@ -21,7 +21,7 @@ class DepartmentsController extends Controller
         }
         public function storeDepartment($id=0){
             $data = \request()->all();
-            $valid = Validator::make($data,$this->getValidationFields());
+            $valid = Validator::make($data,ShRepository::getValidationFields($this->api_model));
             if (count($valid->errors())) {
                 return response([
                     'status' => 'failed',
@@ -48,7 +48,7 @@ class DepartmentsController extends Controller
             $user = \request()->user();
             $departments = new Department();
             $table = 'departments';
-            $search_keys = array_keys($this->getValidationFields());
+            $search_keys = array_keys(ShRepository::getValidationFields($this->api_model));
             return[
                 'status'=>'success',
                 'data'=>SearchRepo::of($departments,$table,$search_keys)

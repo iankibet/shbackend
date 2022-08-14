@@ -232,6 +232,16 @@ class UsersController extends Controller
                     ->make(true)
             ];
         }
+        public function listUsers($role){
+         $users = User::where('role',$role);
+            $search_keys = array_keys(['name','email','phone']);
+//            $search_keys[] = 'users.name';
+            return[
+                'status'=>'success',
+                'data'=>SearchRepo::of($users,'logs',$search_keys)
+                    ->make(true)
+            ];
+        }
 
 
 }
