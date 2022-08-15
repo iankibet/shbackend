@@ -43,6 +43,7 @@ class PermissionsRepository
             $hasChildren = true;
             $main = null;
             $moduleData = json_decode(Storage::get($file));
+            $main = $moduleData->main;
             if(isset($moduleData->roles) && in_array($this->role,$moduleData->roles)) {
                 $res = $this->getModuleUrls($moduleData,$main);
                 $urls = $res['urls'];
@@ -87,7 +88,6 @@ class PermissionsRepository
     protected function getModuleUrls($module, $parentMain){
         $mainUrl = rtrim($module->main,'/');
         if($parentMain && $mainUrl){
-//            dd($parentMain,$mainUrl);
             if(!str_starts_with($mainUrl,'/')) {
                 $mainUrl = trim($parentMain,'/').'/'.$mainUrl;
             }
@@ -115,7 +115,7 @@ class PermissionsRepository
                 }
 //                $url = rtrim($url,'/');
                 if($url){
-                    $childUrls[] = $url;
+                    $childUrls[] = trim($url,'/');
                 }
             }
         }

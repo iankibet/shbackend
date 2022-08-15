@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['api'], 'prefix'=>'api'], function () {
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
     Route::post('auth/login',[$apiAuthController,'login']);
-    Route::post('auth/register',[$apiAuthController,'registerAgent']);
+//    Route::post('auth/register',[$apiAuthController,'registerAgent']);
     Route::post('auth/reset',[$apiAuthController,'resetPassword']);
     Route::post('auth/forgot',[$apiAuthController,'forgotPassword']);
     Route::post('auth/register',[$apiAuthController,'register']);
@@ -49,7 +49,7 @@ Route::group(['middleware' => ['auth:sanctum','sh_auth'], 'prefix'=>'api'], func
             $ext_route = str_replace('user.route.php', '', $file_name);
             $ext_route = str_replace($main_file.'.', '.', $ext_route);
             $ext_route = str_replace('.route.php', '', $ext_route);
-            $ext_route = str_replace('web', '', $ext_route);
+//            $ext_route = str_replace('web', '', $ext_route);
             if ($ext_route)
                 $ext_route = '/' . $ext_route;
             $prefix = strtolower($prefix . $ext_route);
