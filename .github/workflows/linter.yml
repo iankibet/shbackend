@@ -1,4 +1,4 @@
-name: php lint check
+name: php_lint_check
 
 on:
   workflow_dispatch:
