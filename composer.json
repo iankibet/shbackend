@@ -23,5 +23,6 @@
                 "Iankibet\\Shbackend\\SharaServiceProvider"
             ]
         }
-    }
+    },
+    "license": "MIT"
 }
