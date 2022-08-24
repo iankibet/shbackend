@@ -65,17 +65,17 @@ class BackupDatabase extends Command
             $user = User::find(env('DB_BACKUP_EMAIL'));
             if($user){
                 $this->comment("Notifying Admin");
-                Notification::send($user,new DatabaseBackupSuccessful($tar_name,$file_size,$path));
+//                Notification::send($user,new DatabaseBackupSuccessful($tar_name,$file_size,$path));
             }
             exec("rm ".$path);
             exec("rm ".$sql_path);
             $this->info("Backup Complete");
         }catch (\Exception $e){
             $this->error('Failed with error '.$e->getMessage());
-            $user = User::find(env('DB_BACKUP_EMAIL'));
-            if($user){
-                Notification::send($user,new DatabaseBackupError($e->getMessage()));
-            }
+//            $user = User::find(env('DB_BACKUP_EMAIL'));
+//            if($user){
+//                Notification::send($user,new DatabaseBackupError($e->getMessage()));
+//            }
         }
 
     }
