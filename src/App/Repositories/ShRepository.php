@@ -38,7 +38,6 @@ class ShRepository
          'device'=>$device,
          'ip_address'=>$ip
      ]);
-//     event(new NewLog($newLog));
      $logType = \App\Models\Core\LogType::where('slug','like',$slug)->count();
      if(!$logType){
          $name = ucwords(str_replace('_',' ',$slug));
