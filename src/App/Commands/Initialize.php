@@ -70,6 +70,22 @@ class Initialize extends Command
         } else {
             $this->warn('Migrations exist already');
         }
+        $seederDir = str_replace('/app','/',$app_dir).'database/seeders';
+        if(!file_exists($seederDir.'/SuperAdminSeeder.php')){
+            $command = 'cp -r '.__DIR__.'/../seeders/* '.$seederDir.'/';
+            exec($command);
+            $this->info("Copied default seeders");
+        } else {
+            $this->warn('Default seeders exist already');
+        }
+        $testsDir = str_replace('/app','/',$app_dir).'tests';
+        if(!file_exists($testsDir.'/Feature/AuthTest.php')){
+            $command = 'cp -r '.__DIR__.'/../tests/* '.$testsDir.'/';
+            exec($command);
+            $this->info("Copied default tests");
+        } else {
+            $this->warn('Default tests exist already');
+        }
         if(!file_exists(storage_path('app/permissions/modules/common.json'))){
             $command = 'cp -r '.__DIR__.'/../permissions '.storage_path('app').'/';
             exec($command);
