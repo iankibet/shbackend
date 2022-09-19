@@ -20,6 +20,7 @@ class PermissionsRepository
 
     public function getAllowedUrls($permissions=null){
         $modules = json_decode(Storage::get($this->cache_name));
+        $permissions[] = 'common';
         $allUrls = [];
         foreach ($modules as $permission=>$urls){
             if($permissions || $this->role == 'admin') {
