@@ -59,15 +59,15 @@ class ShRepository
         $model = $model_saver->saveModel($data);
         return $model;
     }
+    public static function getFillables($model_class){
+        $model = new $model_class;
+        $fillables = $model->getFillable();
+        return $fillables;
+    }
     public static function getValidationFields($model_class, $fillables = null){
         $data = request()->all();
         if(!$fillables && $model_class){
             $model = new $model_class;
-            $fillables = $model->getFillable();
-        }else
-        {
-            $model_string = decrypt($data['form_model']);
-            $model = new $model_string();
             $fillables = $model->getFillable();
         }
         $validation_array =  [];

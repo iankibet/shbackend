@@ -4,7 +4,7 @@
             $this->api_model = {umodel}::class;
         }
         public function store{umodel}(){
-            $data = \request()->all();
+            $data = \request()->only(ShRepository::getFillables($this->api_model));
             $valid = Validator::make($data,ShRepository::getValidationFields($this->api_model));
             if (count($valid->errors())) {
                 return response([
@@ -36,7 +36,7 @@
         public function listAny{umodel}s(){
             ${model}s = new {umodel}();
             $table = '{model}s';
-            $search_keys = array_keys(ShRepository::getValidationFields($this->api_model));
+            $search_keys = ShRepository::getFillables($this->api_model);
             return[
                 'status'=>'success',
                 'data'=>SearchRepo::of(${model}s,$table,$search_keys)
