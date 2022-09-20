@@ -380,4 +380,11 @@ class AuthController extends Controller
             'data'=>$notification
         ];
     }
+    public function logoutUser(){
+        $user = request()->user();
+        $user->currentAccessToken()->delete();
+        return [
+            'status'=>'success'
+        ];
+    }
 }

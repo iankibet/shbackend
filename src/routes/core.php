@@ -31,6 +31,7 @@ Route::group(['middleware' => [env('SH_API_MIDDLEWARE','auth:sanctum'),'sh_auth'
     Route::post('auth/request-otp',[$apiAuthController,'requestOtp']);
     Route::post('auth/verify-otp',[$apiAuthController,'verifyOtp']);
     Route::get('auth/user',[$apiAuthController,'getUser']);
+    Route::get('auth/logout',[$apiAuthController,'logoutUser']);
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
     $routes_path = base_path('routes/api');
     if(file_exists($routes_path)) {
