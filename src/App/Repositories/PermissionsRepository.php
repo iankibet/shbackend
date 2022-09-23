@@ -20,15 +20,14 @@ class PermissionsRepository
 
     public function getAllowedUrls($permissions=null){
         $modules = json_decode(Storage::get($this->cache_name));
-        $permissions[] = 'common';
         $allUrls = [];
         foreach ($modules as $permission=>$urls){
             if($permissions || $this->role == 'admin') {
+                $permissions[] = 'common';
                 if(in_array($permission,$permissions)){
                     $allUrls = array_merge($allUrls,$urls);
                 }
             } else {
-
                 $allUrls = array_merge($allUrls,$urls);
             }
         }
