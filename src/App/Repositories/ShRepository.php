@@ -49,26 +49,29 @@ class ShRepository
          ]);
      }
  }
-    public static function saveModel($data){
+    public static function saveModel(string $model,$data,? array $forceFill = []){
         $model_saver = New ModelSaverRepository();
-        $model = $model_saver->saveModel($data);
+        $model = $model_saver->saveModel($data, $forceFill);
         return $model;
     }
-    public static function autoSaveModel($data){
+    public static function autoSaveModel(string $model, array $data, ? array $forceFill = []){
         $model_saver = New ModelSaverRepository();
-        $model = $model_saver->saveModel($data);
+        $model = $model_saver->saveModel($model, $data, $forceFill);
         return $model;
     }
-    public static function getValidationFields($model_class, $fillables = null){
+    public static function getFillables($model_class){
+        $model = new $model_class;
+        $fillables = $model->getFillable();
+        return $fillables;
+    }
+    public static function getValidationFields($model_class, array $additionalFields = []){
         $data = request()->all();
-        if(!$fillables && $model_class){
+        if($model_class){
             $model = new $model_class;
             $fillables = $model->getFillable();
-        }else
-        {
-            $model_string = decrypt($data['form_model']);
-            $model = new $model_string();
-            $fillables = $model->getFillable();
+        }
+        if(count($additionalFields)){
+            $fillables = array_merge($fillables,$additionalFields);
         }
         $validation_array =  [];
         $names = ['name'];

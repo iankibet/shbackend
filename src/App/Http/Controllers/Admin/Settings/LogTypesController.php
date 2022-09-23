@@ -17,7 +17,7 @@ class LogTypesController extends Controller
         {
             $this->api_model = LogType::class;
         }
-        public function ShRepository::storeLogType(){
+        public function storeLogType(){
             $data = \request()->all();
             $rules = $this->getValidationFields();
             unset($rules['user_id']);

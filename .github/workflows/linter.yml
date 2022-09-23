@@ -1,0 +1,21 @@
+name: php_lint_check
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  phplinter:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    # PHP Linter (https://github.com/marketplace/actions/check-php-syntax-errors)
+    - name: Linter
+      uses: overtrue/phplint@8.1
+      with:
+        path: .
+        options: --exclude=*.log

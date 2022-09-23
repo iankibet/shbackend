@@ -27,3 +27,6 @@ Homestead.json
 .phpunit.result.cache
 
 
+node_modules
+.temp
+.cache

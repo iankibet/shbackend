@@ -45,5 +45,6 @@ class SharaServiceProvider extends ServiceProvider
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('sh_auth', ShAuth::class);
         $this->loadRoutesFrom(__DIR__.'/routes/core.php');
+        $this->loadMigrationsFrom(__DIR__.'/migrations');
     }
 }

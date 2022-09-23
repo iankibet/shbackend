@@ -181,31 +181,19 @@ class AuthController extends Controller
         $user->menuCounts = $menuCounts;
         return $user;
     }
-    public function getRandomString($len=2){
-        $str = '';
-        $a = "abcdefghijklmnopqrstuvwxyz";
-        $b = str_split($a);
-        for ($i=1; $i <= $len ; $i++) {
-            $str .= $b[rand(0,strlen($a)-1)];
-        }
-        return $str;
-    }
     public function updateProfile(){
         $user = \request()->user();
         $data = \request()->all();
-        if($user->role == 'client') {
-            $valid = Validator::make($data,[
-                'phone'=>'required',
-                'name'=>'required'
-            ]);
-        } else {
-            $valid = Validator::make($data,[
-                'phone'=>'required',
-                'name'=>'required',
-                'city'=>'required',
-                'street'=>'required'
-            ]);
+        $rules = [
+            'phone'=>'required',
+            'name'=>'required'
+        ];
+        $phone = \request('phone');
+        $previous_phone = $user->phone;
+        if($previous_phone != $phone){
+            $rules['phone'] = 'required|unique:users';
         }
+        $valid = Validator::make($data,$rules);
         if (count($valid->errors())) {
             return response([
                 'status' => 'failed',
@@ -231,10 +219,6 @@ class AuthController extends Controller
         } else {
             $user->phone = \request('phone');
         }
-        if($previous_phone != $phone){
-            $user->otp=null;
-            $user->phone_verified_at = null;
-        }
         if(strlen($user->phone)<10){
             return response([
                 'status' => 'failed',
@@ -242,13 +226,6 @@ class AuthController extends Controller
             ], 422);
         }
         $user->name = \request('name');
-        if(\request('city')){
-            $user->city = \request('city');
-            $user->street = \request('street');
-        }
-        if($user->role == 'agent'){
-            $user->profile_step = 2.1;
-        }
         $user->update();
         return [
             'status'=>'success',
@@ -282,102 +259,11 @@ class AuthController extends Controller
             'message'=>'password updated successfully'
         ];
     }
-    public function get_client_ip_env() {
-        $ipaddress = '';
-        if (getenv('HTTP_CLIENT_IP'))
-            $ipaddress = getenv('HTTP_CLIENT_IP');
-        else if(getenv('HTTP_X_FORWARDED_FOR'))
-            $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
-        else if(getenv('HTTP_X_FORWARDED'))
-            $ipaddress = getenv('HTTP_X_FORWARDED');
-        else if(getenv('HTTP_FORWARDED_FOR'))
-            $ipaddress = getenv('HTTP_FORWARDED_FOR');
-        else if(getenv('HTTP_FORWARDED'))
-            $ipaddress = getenv('HTTP_FORWARDED');
-        else if(getenv('REMOTE_ADDR'))
-            $ipaddress = getenv('REMOTE_ADDR');
-        else
-            $ipaddress = 'UNKNOWN';
-        return explode(',',$ipaddress)[0];
-    }
-    public function requestOtp(){
-        $user = \request()->user();
-        $otp = random_int(1005,9967);
-        $user->otp = Hash::make($otp);
-        $user->update();
-        $message = "Use OTP $otp to verify your phone in hauzisha";
-        $user->notify(new verifyPhone($message));
-        return [
-            'status'=>'success',
-            'message'=>'OTP send via sms'
-        ];
-    }
-    public function verifyOtp(){
-        $user = \request()->user();
-        $data = \request()->all();
-        $valid = Validator::make($data,[
-            'otp'=>'required',
-        ]);
-        if (count($valid->errors())) {
-            return response([
-                'status' => 'failed',
-                'errors' => $valid->errors()
-            ], 422);
-        }
-        if(!Hash::check(\request('otp'),$user->otp)){
-            return response([
-                'status' => 'failed',
-                'errors' => ['otp'=>['Invalid otp']]
-            ], 422);
-        }
-        $user->phone_verified_at = now();
-        $user->profile_step = 3;
-        $user->update();
-        return [
-            'status'=>'success',
-            'message'=>'Otp verified successfully'
-        ];
-    }
-
-    public function listNotifications($status=null){
+    public function logoutUser(){
         $user = request()->user();
-        if($status == 'count'){
-            return [
-                'unread'=>$user->unreadNotifications()->count(),
-                'read'=>$user->readNotifications()->count()
-            ];
-        }
-        if($status == 'unread') {
-            $notifications = $user->unreadNotifications();
-        } else {
-            $notifications = $user->readNotifications();
-        }
-        $results = SearchRepo::of($notifications,'notifications', ['data'])
-            ->make();
+        $user->currentAccessToken()->delete();
         return [
-            'status'=>'success',
-            'data'=>$results
-        ];
-    }
-    public function readAllNotifications() {
-        $user = request()->user();
-        $user->unreadNotifications()->update([
-            'read_at'=>now()
-        ]);
-        ShRepository::storeLog('read_notifications', 'Marked all notifications read');
-        return [
-            'status'=>'success',
-            'message'=>'Notifications marked read'
-        ];
-    }
-    public function markNotificationRead($id){
-        $user = request()->user();
-        $notification = $user->notifications()->find($id);
-        $notification->read_at = now();
-        $notification->update();
-        return [
-            'status'=>'success',
-            'data'=>$notification
+            'status'=>'success'
         ];
     }
 }
