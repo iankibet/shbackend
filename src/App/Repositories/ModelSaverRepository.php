@@ -16,22 +16,26 @@ use function session;
 class ModelSaverRepository
 {
 
-    public function saveModel($request_data){
+    public function saveModel(string $model, $request_data,  ? array $forceFill = []){
         if(isset($request_data['ypos'])){
-//            dd($request_data);
             session()->flash('ypos',$request_data['ypos']);
         }
         $request_data = (object)$request_data;
-        $class = decrypt($request_data->form_model);
-        $model = $class::findOrNew(@$request_data->id);
+        $fillables = ShRepository::getFillables($model);
+        if(isset($forceFill['id'])){
+            $model = $model::findOrFail($forceFill['id']);
+            unset($forceFill['id']);
+        } else {
+            $model = new $model;
+        }
+        //set fillable values
         foreach($request_data as $key=>$value){
-            if(!in_array($key,['id','ypos','xpos','fid','_token','entity_name','form_model','password_confirmation','tab'])){
-                if($key == 'password'){
-                    $model->$key = bcrypt($value);
-                }else{
-                    $model->$key = $value;
-                }
+            if(in_array($key,$fillables)){
+                $model->$key = $value;
             }
+        }
+        foreach($forceFill as $key=>$value){
+            $model->$key = $value;
         }
         $model->save();
         return $model;

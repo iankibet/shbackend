@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['api'], 'prefix'=>'api'], function () {
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
     Route::post('auth/login',[$apiAuthController,'login']);
-//    Route::post('auth/register',[$apiAuthController,'registerAgent']);
     Route::post('auth/reset',[$apiAuthController,'resetPassword']);
     Route::post('auth/forgot',[$apiAuthController,'forgotPassword']);
     Route::post('auth/register',[$apiAuthController,'register']);
@@ -24,9 +23,6 @@ Route::group(['middleware' => ['api'], 'prefix'=>'api'], function () {
 
 Route::group(['middleware' => [env('SH_API_MIDDLEWARE','auth:sanctum'),'sh_auth'], 'prefix'=>'api'], function () {
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
-    Route::post('auth/notifications/read-all',[$apiAuthController,'readAllNotifications']);
-    Route::get('auth/notifications/{status}',[$apiAuthController,'listNotifications']);
-    Route::post('auth/notifications/mark-read/{id}',[$apiAuthController,'markNotificationRead']);
     Route::post('auth/user',[$apiAuthController,'updateProfile']);
     Route::post('auth/request-otp',[$apiAuthController,'requestOtp']);
     Route::post('auth/verify-otp',[$apiAuthController,'verifyOtp']);

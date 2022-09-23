@@ -58,7 +58,7 @@ class Initialize extends Command
             $this->info('Created api controller directory');
         }
         if(!file_exists($app_dir.'/Models/Core/Department.php')){
-            $command2 = 'cp -r '.__DIR__.'/../Models/Core '.$app_dir.'/Models/';
+            $command2 = 'cp -r '.__DIR__.'/../../templates/Models/Core '.$app_dir.'/Models/';
             exec($command2);
             $this->info("Copied default models");
         }
