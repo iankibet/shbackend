@@ -10,8 +10,8 @@ class Department extends Model
 
 	use HasFactory;
 	protected $fillable = ["name","description"];
-    
-    public function departmentPermissions(){
+
+    public function permissions(){
         return $this->hasMany(DepartmentPermission::class);
     }
 }
