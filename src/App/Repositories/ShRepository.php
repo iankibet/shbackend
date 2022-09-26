@@ -98,14 +98,17 @@ class ShRepository
         return $validation_array;
     }
     public static function translateStatus($state, $statuses){
-        if (is_numeric($state))
+        if (is_numeric($state) && !is_numeric(array_keys($statuses)[0]))
             $statuses = array_flip($statuses);
+
+        if (!is_numeric($state) && is_numeric(array_keys($statuses)[0]))
+            $statuses = array_flip($statuses);
+
         if(is_array($state)){
             $states  = [];
             foreach($state as $st){
                 $states[] = $statuses[$st];
             }
-
             return $states;
         }
 //        dd($statuses);
