@@ -49,12 +49,12 @@ class ShRepository
          ]);
      }
  }
-    public static function saveModel(string $model,$data,? array $forceFill = []){
+    public static function saveModel($model,$data,? array $forceFill = []){
         $model_saver = New ModelSaverRepository();
         $model = $model_saver->saveModel($data, $forceFill);
         return $model;
     }
-    public static function autoSaveModel(string $model, array $data, ? array $forceFill = []){
+    public static function autoSaveModel($model, array $data, ? array $forceFill = []){
         $model_saver = New ModelSaverRepository();
         $model = $model_saver->saveModel($model, $data, $forceFill);
         return $model;
