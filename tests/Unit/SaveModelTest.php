@@ -25,8 +25,9 @@ class SaveModelTest extends \Iankibet\Shbackend\Tests\TestCase
         $newData = [
             'name'=>$newName,
         ];
-        $editedDepartment = \Iankibet\Shbackend\App\Repositories\ShRepository::autoSaveModel($model,$newData,['id'=>$department->id]);
+        $editedDepartment = \Iankibet\Shbackend\App\Repositories\ShRepository::autoSaveModel($department,$newData,['id'=>10]);
         $this->assertEquals($editedDepartment->id,$department->id);
         $this->assertEquals($editedDepartment->name,$newName);
+        $this->assertEquals($editedDepartment->id,$department->id);
     }
 }
