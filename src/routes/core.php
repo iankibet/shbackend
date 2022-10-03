@@ -21,11 +21,12 @@ Route::group(['middleware' => ['api'], 'prefix'=>'api'], function () {
     Route::post('auth/register',[$apiAuthController,'register']);
 });
 
-Route::group(['middleware' => [env('SH_API_MIDDLEWARE','auth:sanctum'),'sh_auth'], 'prefix'=>'api'], function () {
+$middleWares = env('SH_API_MIDDLEWARE','auth:sanctum');
+$middleWares = explode(',',$middleWares);
+$middleWares[] = 'sh_auth';
+Route::group(['middleware' => $middleWares, 'prefix'=>'api'], function () {
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
     Route::post('auth/user',[$apiAuthController,'updateProfile']);
-    Route::post('auth/request-otp',[$apiAuthController,'requestOtp']);
-    Route::post('auth/verify-otp',[$apiAuthController,'verifyOtp']);
     Route::get('auth/user',[$apiAuthController,'getUser']);
     Route::post('auth/logout',[$apiAuthController,'logoutUser']);
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
