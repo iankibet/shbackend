@@ -2,6 +2,7 @@
 
 namespace Iankibet\Shbackend;
 
+use Iankibet\Shbackend\App\Commands\CachePermissions;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 
@@ -39,7 +40,8 @@ class SharaServiceProvider extends ServiceProvider
                 BackupDatabase::class,
                 MakeApiEndPoint::class,
                 Initialize::class,
-                CreateSuperAdmin::class
+                CreateSuperAdmin::class,
+                CachePermissions::class
             ]);
         }
         $router = $this->app->make(Router::class);

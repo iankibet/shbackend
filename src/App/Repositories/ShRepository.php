@@ -60,16 +60,27 @@ class ShRepository
         return $model;
     }
     public static function getFillables($model_class){
-        $model = new $model_class;
+     if(is_string($model_class)){
+         $model = new $model_class;
+     } else {
+         $model = $model_class;
+     }
+
         $fillables = $model->getFillable();
         return $fillables;
     }
-    public static function getValidationFields($model_class, array $additionalFields = []){
-        $data = request()->all();
-        if($model_class){
-            $model = new $model_class;
-            $fillables = $model->getFillable();
-        }
+
+    /**
+     * @param $model_class
+     * @param array $validationFields
+     * @return mixed
+     * @deprecated use getValidationRules instead
+     */
+    public static function getValidationFields($model_class, array $validationFields = []) {
+     return self::getValidationFields($model_class,$validationFields);
+    }
+    public static function getValidationRules($model_class, array $additionalFields = []){
+        $fillables = self::getFillables($model_class);
         if(count($additionalFields)){
             $fillables = array_merge($fillables,$additionalFields);
         }
@@ -93,8 +104,6 @@ class ShRepository
             $validation_array['file'] = 'required|max:50000';
         }
         $validation_array['id']='';
-        $validation_array['form_model']='';
-        unset($validation_array['form_model']);
         return $validation_array;
     }
     public static function translateStatus($state, $statuses){
@@ -111,7 +120,6 @@ class ShRepository
             }
             return $states;
         }
-//        dd($statuses);
         if(isset($statuses[$state])){
             return $statuses[$state];
         }
