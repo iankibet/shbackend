@@ -14,7 +14,9 @@ class PermissionsRepository
         if($this->user){
             $this->role = $this->user->role;
             $this->cache_name = 'permissions/'.$this->role.'_cache.json';
-            $this->backupPermisions();
+            if(app()->environment() == 'local'){
+                $this->backupPermisions();
+            }
         }
     }
 
@@ -34,7 +36,11 @@ class PermissionsRepository
         return $allUrls;
     }
 
-    protected function backupPermisions(){
+    public function backupPermisions($role = null){
+        if($role){
+            $this->role = $role;
+            $this->cache_name = 'permissions/'.$this->role.'_cache.json';
+        }
         $files = Storage::files($this->filesPath);
         $permissions = [];
         foreach ($files as $file){
