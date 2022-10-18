@@ -77,7 +77,7 @@ class ShRepository
      * @deprecated use getValidationRules instead
      */
     public static function getValidationFields($model_class, array $validationFields = []) {
-     return self::getValidationFields($model_class,$validationFields);
+     return self::getValidationRules($model_class,$validationFields);
     }
     public static function getValidationRules($model_class, array $additionalFields = []){
         $fillables = self::getFillables($model_class);
