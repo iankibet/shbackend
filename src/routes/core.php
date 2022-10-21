@@ -46,7 +46,8 @@ Route::group(['middleware' => $middleWares, 'prefix'=>'api'], function () {
             $arr = array_map('ucwords', $arr);
             $arr = array_filter($arr);
             $ext_route = str_replace('user.route.php', '', $file_name);
-            $ext_route = str_replace($main_file.'.', '.', $ext_route);
+            if($main_file.'.route.php' === $ext_route)
+                $ext_route = str_replace($main_file.'.', '.', $ext_route);
             $ext_route = str_replace('.route.php', '', $ext_route);
 //            $ext_route = str_replace('web', '', $ext_route);
             if ($ext_route)
