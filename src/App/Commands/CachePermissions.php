@@ -31,6 +31,10 @@ class CachePermissions extends Command
     {
         $roles = User::groupBy('role')->pluck('role')->toArray();
         $permissionsRepo = new PermissionsRepository();
+        if(!count($roles)){
+            //use default roles
+            $roles = ['member','admin','client','customer'];
+        }
        foreach ($roles as $role){
            if($role){
                $this->warn("working on $role permissions");
