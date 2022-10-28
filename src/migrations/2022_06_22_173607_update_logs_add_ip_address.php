@@ -13,10 +13,15 @@ class UpdateLogsAddIpAddress extends Migration
      */
     public function up()
     {
-        Schema::table('logs', function (Blueprint $table) {
-            //
-            $table->string('ip_address')->nullable();
-        });
+        try{
+            Schema::table('logs', function (Blueprint $table) {
+                //
+                $table->string('ip_address')->nullable();
+            });
+        }catch (\Exception $exception){
+
+        }
+
     }
 
     /**

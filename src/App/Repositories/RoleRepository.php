@@ -208,7 +208,13 @@ class RoleRepository
             $modulePermissions = json_decode(Storage::get($module));
             $allPermissions->$moduleSlug = $modulePermissions;
         }
-        return self::getPermissionSlugs($allPermissions->$reqModule, null,$role);
+        try{
+            $slugs = self::getPermissionSlugs($allPermissions->$reqModule, null,$role);
+        }catch (\Exception $e){
+//            dd($reqModule);
+            throw new \Exception("invalid module config in: $reqModule.json");
+        }
+        return $slugs;
     }
 
     protected static function getPermissionSlugs($allPermission, $slug,$role,$slugs = []){
