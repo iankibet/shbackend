@@ -13,14 +13,18 @@ class CreateDepartmentPermissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('department_permissions', function (Blueprint $table) {
-            $table->id();
-            $table->integer('department_id');
-			$table->string('module');
-			$table->json('permissions')->nullable();
-			$table->json('urls')->nullable();
-            $table->timestamps();
-        });
+        try{
+            Schema::create('department_permissions', function (Blueprint $table) {
+                $table->id();
+                $table->integer('department_id');
+                $table->string('module');
+                $table->json('permissions')->nullable();
+                $table->json('urls')->nullable();
+                $table->timestamps();
+            });
+        }catch (\Exception $e){
+
+        }
     }
 
     /**
