@@ -51,7 +51,7 @@ class CreateSuperAdmin extends Command
             'email' => $email,
             'password' => Hash::make($password)
         ]);
-        if (strtolower($this->ask('Create Department?, y/n', 'n')) == 'y') {
+        if (strtolower($this->ask('Create Department?, y/n', 'y')) == 'y') {
             $department = $this->ask('Department Name?', 'Super Admin');
             $department = Department::create([
                 'name' => $department,

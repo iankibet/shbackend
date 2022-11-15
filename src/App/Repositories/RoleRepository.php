@@ -314,7 +314,7 @@ class RoleRepository
             $current = substr_replace($current, '', 0, 4);
         }
         if (!in_array($current, $allowed_urls)) {
-            $this->unauthorized();
+            $this->unauthorized($current,$allowed_urls);
         }
     }
 
@@ -450,12 +450,19 @@ class RoleRepository
 
     }
 
-    public function unauthorized()
+    public function unauthorized($url=null,$allowed=null)
     {
         $common_paths = ['logout', 'login', 'register'];
         $path = $this->path;
         if (!in_array($path, $common_paths)) {
-            App::abort(403, "Not authorized to access this page/resource/endpoint");
+            $array = [
+              'message'=>  "Not authorized to access this page/resource/endpoint",
+                'url'=>$url,
+                'allowed'=>$allowed,
+                'common'=>$common_paths
+            ];
+            abort(response($array,403));
+            App::abort(403,$array);
             die('You are not authorized to perform this action');
         }
     }
