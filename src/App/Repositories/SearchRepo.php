@@ -93,7 +93,7 @@ class SearchRepo
         return self::$instance;
     }
 
-    public static function make($pagination = true){
+    public static function make($formatResponse = true){
         $data = self::$data;
         $request_data = self::$request_data;
         if(isset($request_data['all'])){
@@ -134,6 +134,49 @@ class SearchRepo
 
     }
 
+    public static function response(){
+        $data = self::$data;
+        $request_data = self::$request_data;
+        if(isset($request_data['all'])){
+            return $data;
+        }
+        unset($request_data['page']);
+        $data->appends($request_data);
+//        if($pagination){
+//            $pagination = $data->links()->__toString();
+//            $data = $data->toArray();
+//            $data['pagination'] = $pagination;
+//        }
+        if(isset($request_data['download_csv'])){
+            $csv_data = $data['data'];
+            if(count($csv_data)){
+                $single = $csv_data[0];
+                unset($single['action']);
+                $keys = array_keys($single);
+                $file_path = storage_path("app/tmp/download_".time().Str::random(5).'.csv');
+                $tmp = fopen($file_path,'w');
+                fputcsv($tmp,$keys);
+                foreach ($csv_data as $row){
+                    unset($row['action']);
+                    fputcsv($tmp,array_values($row));
+                }
+                fclose($tmp);
+                $name = null;
+                if($request_data['base_table']){
+                    $name = $request_data['base_table'].date('_Y-m-d_h_i_a').'.csv';
+                }
+                return response()->download($file_path,$name)->deleteFileAfterSend();
+
+            }else{
+                return redirect()->back()->with('notice',['type'=>'error','message'=>'No records found']);
+            }
+        }
+        $response = [
+            'status'=>'success',
+            'data'=>$data
+        ];
+        return response($response,200);
+    }
     public static function addColumn($column,$function){
         $records = self::$data;
         foreach($records as $index=>$record){
