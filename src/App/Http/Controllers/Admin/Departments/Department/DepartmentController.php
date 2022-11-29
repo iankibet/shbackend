@@ -19,7 +19,22 @@ class DepartmentController extends Controller
         return [
             'status'=>'success',
             'data'=>SearchRepo::of($modules)
-            ->make(true)
+                ->make(true)
+        ];
+    }
+    public function listAllModules($role,$id){
+        $department = Department::find($id);
+        $modules = RoleRepository::getRolePermissions($role,true);
+        $commonIndex = array_search('common',$modules,true);
+        if($commonIndex !== false){
+            unset($modules[$commonIndex]);
+        }
+        $modules = array_values($modules);
+        $modules = array_unique($modules);
+        return [
+            'modules'=>$modules,
+            'department'=>$department,
+            'departmentModules'=>$department->permissions()->pluck('module')->toArray()
         ];
     }
     public function listPendingModules($department_id){
@@ -30,8 +45,8 @@ class DepartmentController extends Controller
             if(in_array($module,$modules))
                 continue;
             $new[] = [
-              'id'=>$module,
-              'name'=>ucwords(str_replace('_',' ',$module))
+                'id'=>$module,
+                'name'=>ucwords(str_replace('_',' ',$module))
             ];
         }
         return [
@@ -42,7 +57,7 @@ class DepartmentController extends Controller
     public function addModule($department_id){
         $data = \request()->all();
         $rules = [
-          'permission_module'=>'required'
+            'permission_module'=>'required'
         ];
         $valid = Validator::make($data,$rules);
         if($valid->errors()->count()){
@@ -68,8 +83,8 @@ class DepartmentController extends Controller
         session()->put('permissions',null);
         session()->put('allowed_urls',null);
         return response([
-           'status'=>'success',
-           'module'=>$module
+            'status'=>'success',
+            'module'=>$module
         ]);
     }
 
@@ -84,9 +99,28 @@ class DepartmentController extends Controller
     }
     public function getModulePermissions($module){
         $adminPermissions = RoleRepository::getModulePermissions('admin',$module);
+        $selectedPermissions = [];
+        if(\request('department_id')){
+            $selectedPermissions = @DepartmentPermission::where([
+                ['department_id','=',\request('department_id')],
+                ['module','=',$module]
+            ])->first()->permissions;
+//            dd($selectedPermissions);
+            if($selectedPermissions){
+                $selectedPermissions = json_decode($selectedPermissions);
+//                $replaced = [];
+//                foreach ($selectedPermissions as $permission){
+//                    if($permission != $module){
+//                        $replaced[] = $permission;
+//                    }
+//                }
+//                $selectedPermissions = $replaced;
+            }
+        }
         return [
             'module'=>$module,
-            'permissions'=>$adminPermissions
+            'permissions'=>$adminPermissions,
+            'selectedPermissions'=>$selectedPermissions
         ];
     }
 
@@ -104,6 +138,27 @@ class DepartmentController extends Controller
         return [
             'status'=>'success',
             'module'=>$module
+        ];
+    }
+    public function updateModulePermissionsWithSlug($id,$module){
+        $department = Department::findOrFail($id);
+        $module = $department->permissions()->where('module',$module)->firstOrCreate([
+            'module'=>$module
+        ]);
+        $permissions = \request('permissions');
+        if(!count($permissions)){
+            $module->delete();
+        } else {
+            $module->permissions = $permissions;
+            $roleRepo = new RoleRepository();
+            $allowed_urls = $roleRepo->extractRoleUrls($module->module,$module->permissions,'admin');
+            $module->urls = $allowed_urls;
+            $module->update();
+        }
+        return [
+            'status'=>'success',
+            'module'=>$module,
+            'departmentModules'=>$department->permissions()->pluck('module')->toArray()
         ];
     }
     public function removeModulePermissions($id)

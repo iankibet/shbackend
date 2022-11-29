@@ -186,6 +186,8 @@ class RoleRepository
                 $slugs = array_merge($slugs, $new_slugs);
             }
         }
+        $modules_arr = array_unique($modules_arr);
+        $slugs = array_unique($slugs);
         if($returnModules){
             return $modules_arr;
         }

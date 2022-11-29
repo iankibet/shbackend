@@ -59,6 +59,9 @@ class ChainModelSaver
     public static function forceFillData(array $forceFill){
         return self::setForcefillData($forceFill);
     }
+    public static function forceFill(array $forceFill){
+        return self::setForcefillData($forceFill);
+    }
 
     public static function setValidationRules(array $rules){
         $realRules = [];
@@ -73,6 +76,21 @@ class ChainModelSaver
         return self::$instance;
     }
     public static function setValidationRulesFromFillable(array $moreRules=[]){
+        $model = self::$model;
+        $fillables = $model->getFillable();
+        $allRules = array_merge($fillables,$moreRules);
+        $realRules = [];
+        foreach ($allRules as $key=>$value){
+            if(is_int($key)){
+                $realRules[$value] = 'required';
+            } else {
+                $realRules[$key] = $value;
+            }
+        }
+        self::$validationRules = $realRules;
+        return self::$instance;
+    }
+    public static function validateFillable(array $moreRules=[]){
         $model = self::$model;
         $fillables = $model->getFillable();
         $allRules = array_merge($fillables,$moreRules);
