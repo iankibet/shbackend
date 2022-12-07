@@ -19,20 +19,19 @@ class SearchRepo
     public static function of($model,$base_tbl=null,$search_keys=null){
         self::$instance = new self();
         $request_data = request()->all();
-        if($base_tbl){
-            $request_data['base_table'] = $base_tbl;
+        if(!$base_tbl){
+            $base_tbl = $model->getTable();
         }
-        if($search_keys){
-            $request_data['keys'] = $search_keys;
+        if(!$search_keys){
+            $search_keys = [...$model->getFillable(),'created_at','updated_at'];
         }
-
+        $request_data['keys'] = $search_keys;
+        $request_data['base_table'] = $base_tbl;
         self::$request_data = $request_data;
         if(isset($request_data['start_d'])){
-
             if($request_data['has_range']){
                 $start_date = Carbon::createFromTimestamp(strtotime($request_data['start_d']))->startOfDay();
                 $end_date = Carbon::createFromTimestamp(strtotime($request_data['end_d']))->endOfDay();
-//              dd($start_date,$end_date,$request_data);
                 if(!$request_data['base_table']){
                     $model = $model->where([
                         ['created_at','>=',$start_date],
