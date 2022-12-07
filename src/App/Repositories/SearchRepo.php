@@ -20,10 +20,10 @@ class SearchRepo
         self::$instance = new self();
         $request_data = request()->all();
         if(!$base_tbl){
-            $base_tbl = $model->getTable();
+            $base_tbl = $model->getModel()->getTable();
         }
         if(!$search_keys){
-            $search_keys = [...$model->getFillable(),'created_at','updated_at'];
+            $search_keys = [...$model->getModel()->getFillable(),'created_at','updated_at'];
         }
         $request_data['keys'] = $search_keys;
         $request_data['base_table'] = $base_tbl;
