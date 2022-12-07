@@ -55,7 +55,7 @@ Route::group(['middleware' => $middleWares, 'prefix'=>'api'], function () {
             $prefix = strtolower($prefix . $ext_route);
             $namespace = implode('\\', $arr);
             $namespace = str_replace('\\\\','\\',$namespace);
-            Route::group(['namespace' => $namespace, 'prefix' => $prefix], function () {
+            Route::group(['prefix' => $prefix], function () {
                 require $this->route_path;
             });
         }
