@@ -1,0 +1,33 @@
+{
+    "main": "sh-departments",
+    "roles": ["admin"],
+    "children": {
+        "departments": {
+            "main": "/sh-departments",
+            "roles": ["admin"],
+            "children": {
+                "add_department": {
+                    "main": "/sh-departments",
+                    "roles": ["admin"]
+                },
+                "list_departments": {
+                    "main": "list",
+                    "roles": ["admin"]
+                },
+                "delete_department": {
+                    "main": "department/delete",
+                    "roles": ["admin"]
+                },
+                "manage_permissions": {
+                    "main": "department",
+                    "roles": ["admin"],
+                    "urls": [
+                        "list-all-modules",
+                        "get-module-permissions",
+                        "permissions"
+                    ]
+                }
+            }
+        }
+    }
+}
