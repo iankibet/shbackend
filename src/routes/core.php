@@ -30,6 +30,26 @@ Route::group(['middleware' => $middleWares, 'prefix'=>'api'], function () {
     Route::get('auth/user',[$apiAuthController,'getUser']);
     Route::post('auth/logout',[$apiAuthController,'logoutUser']);
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
+
+    //permission Routes
+    $departmentsController = \Iankibet\Shbackend\App\Http\FrameworkControllers\Sh\ShDepartments::class;
+    Route::post('/sh-departments/{id?}',[$departmentsController,'storeDepartment']);
+    Route::get('sh-departments/list',[$departmentsController,'listDepartments']);
+    Route::get('sh-departments/department/{id}',[$departmentsController,'getDepartment']);
+    Route::post('sh-departments/permissions/{id}',[$departmentsController,'updatePermissions']);
+    Route::post('sh-departments/department/delete/{id}',[$departmentsController,'deleteDepartment']);
+    Route::get('sh-departments/all-permissions',[$departmentsController,'allPermissions']);
+
+    $departmentController = Iankibet\Shbackend\App\Http\FrameworkControllers\Sh\Department\ShDepartmentController::class;
+    Route::get('/sh-departments/department/list-modules/{id}',[$departmentController,'listModules']);
+    Route::post('/sh-departments/department/add-module/{id}',[$departmentController,'addModule']);
+    Route::post('/sh-departments/department/permissions/{id}',[$departmentController,'setModulePermissions']);
+    Route::post('/sh-departments/department/permissions/{id}/{module}',[$departmentController,'updateModulePermissionsWithSlug']);
+    Route::get('/sh-departments/department/list-pending-modules/{id}',[$departmentController,'listPendingModules']);
+    Route::get('/sh-departments/department/list-all-modules/{role}/{id}',[$departmentController,'listAllModules']);
+    Route::get('/sh-departments/department/get-module-permissions/{module}',[$departmentController,'getModulePermissions']);
+    Route::post('/sh-departments/department/delete-department/{module}',[$departmentController,'removeModulePermissions']);
+
     $routes_path = base_path('routes/api');
     if(file_exists($routes_path)) {
         $route_files = File::allFiles(base_path('routes/api'));
