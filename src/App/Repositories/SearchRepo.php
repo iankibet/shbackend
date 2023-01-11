@@ -16,7 +16,7 @@ class SearchRepo
     protected static $instance;
     protected static $tmp_key;
     protected static $tmp_value;
-    public static function of($model,$base_tbl=null,$search_keys=null){
+    public static function of($model,$base_tbl=null,$search_keys=null,$cache=false){
         self::$instance = new self();
         $request_data = request()->all();
         if(!$base_tbl){
@@ -28,23 +28,10 @@ class SearchRepo
         $request_data['keys'] = $search_keys;
         $request_data['base_table'] = $base_tbl;
         self::$request_data = $request_data;
-        if(isset($request_data['start_d'])){
-            if($request_data['has_range']){
-                $start_date = Carbon::createFromTimestamp(strtotime($request_data['start_d']))->startOfDay();
-                $end_date = Carbon::createFromTimestamp(strtotime($request_data['end_d']))->endOfDay();
-                if(!$request_data['base_table']){
-                    $model = $model->where([
-                        ['created_at','>=',$start_date],
-                        ['created_at','<=',$end_date]
-                    ]);
-                }else{
-//                    dd($start_date,$end_date);
-                    $model = $model->where([
-                        [$request_data['base_table'].'.created_at','>=',$start_date],
-                        [$request_data['base_table'].'.created_at','<=',$end_date]
-                    ]);
-                }
-            }
+        if($request_data['period']){
+            $start_date = Carbon::parse($request_data['from'])->startOfDay();
+            $end_date = Carbon::parse($request_data['to'])->endOfDay();
+            $model = $model->whereBetween($base_tbl.'.created_at',[$start_date,$end_date]);
         }
 
         if(isset($request_data['filter_value'])){

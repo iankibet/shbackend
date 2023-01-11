@@ -13,6 +13,11 @@ class ShRepository
     public static function beginAutoSaveModel($model,array $data=[],array $forceFill = []){
         return ChainModelSaver::beginAutoSaveModel($model,$data,$forceFill);
     }
+    public static function getCachedQueryResults($query){
+        $repo = new CachingRepository();
+        return $repo->getCachedQueryResults($query);
+    }
+
     public static function autoSaveModelFromRequest($model,$forceFill = null){
         $data = request()->all();
         return self::autoSaveModel($model,$data,$forceFill ?? []);
