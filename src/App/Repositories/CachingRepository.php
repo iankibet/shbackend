@@ -14,27 +14,40 @@ class CachingRepository
     {
 
     }
-    public function getCachedQueryResults($query){
+    public function getCachedQueryResults($query,$graph=null, ...$graphParams){
         $table = $query->getModel()->getTable();
         $originalBindings = $query->getBindings();;
         $period = request('period');
         if($period == 'custom'){
-            //
             $from = Carbon::parse(request('from'));
             $to = Carbon::parse(request('to'));
             return $query->whereBetween($table.'.created_at',[$from,$to]);
         }
         $connection = $query->getConnection()->getName();
         $keyString = $connection.'!'.$table.'!'.$query->toSql().'!'.implode('~',$originalBindings);
+        if($graphParams){
+            $paramsStr = '';
+            foreach ($graphParams as $graphParam){
+                if(is_array($graphParam)){
+                    $paramsStr.=count($graphParam);
+                } else {
+                    try{
+                        $paramsStr.=$graphParam;
+                    }catch (\Exception){
+                    }
+                }
+            }
+            $keyString.='!'.$paramsStr.'!'.$graph;
+        }
         $cacheKey = base64_encode($keyString);
-        $this->getCacheResults($cacheKey,$period);
+        $this->getCacheResults($cacheKey,$period,$graphParams);
     }
 
-    public  function getCacheResults($key,$period,$cache=false){
+    public  function getCacheResults($key,$period,$graphParams=null){
         $cache_key = $key.'_'.$period;
         $results = Cache::get($cache_key);
-        if(!$results || $cache){
-            $this->setCacheKey($key);
+        if(!$results){
+            $this->setCacheKey($key,$graphParams);
             $arr = explode('!',base64_decode($key));
             $sql = $arr[2];
             $table = $arr[1];
@@ -51,12 +64,13 @@ class CachingRepository
             $range = $periods[$period];
             $bindings = array_merge(explode('~',$arr[3]),$range);
             $results = DB::connection($connection)->select($querySql,$bindings);
+            if($graphParams){
+                $graphType = $arr[count($arr)-1];
+                $results = $graphType == 'stock' ? GraphStatsRepository::getStockData($results,...$graphParams):GraphStatsRepository::getChartData($results,...$graphParams);
+            }
             Cache::put($cache_key,$results);
         }
-        if(!$cache){
-            return $results;
-        }
-        return true;
+        return $results;
     }
 
     public function getCachePeriods(){
@@ -99,9 +113,12 @@ class CachingRepository
         return Cache::forget($this->sh_cache_key);
     }
 
-    protected function setCacheKey($cacheKey){
+    protected function setCacheKey($cacheKey,$graphParams){
         $cacheKeys = Cache::get($this->sh_cache_key,[]);
-        $cacheKeys[$cacheKey] = now();
+        $cacheKeys[$cacheKey] = [
+            'last_used'=>now()->toDateTimeString(),
+            'graphData'=>$graphParams
+        ];
         Cache::put($this->sh_cache_key,$cacheKeys);
         return true;
     }
