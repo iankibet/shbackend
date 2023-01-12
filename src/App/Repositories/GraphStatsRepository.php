@@ -13,7 +13,7 @@ class GraphStatsRepository
         $table = $query->getModel()->getTable();
         $diff_days = $from->diffInDays($to);
         $cachingRepo = new CachingRepository();
-        return $cachingRepo->getCachedQueryResults($query,$type, $from, $to, $date_field,$fields);
+        return $cachingRepo->getCachedQueryResults($query,null,$type, $from, $to, $date_field,$fields);
     }
 
     public static function getChartData($items,$from,$to, $date_field,$fields){
