@@ -28,7 +28,7 @@ class SearchRepo
         $request_data['keys'] = $search_keys;
         $request_data['base_table'] = $base_tbl;
         self::$request_data = $request_data;
-        if($request_data['period']){
+        if(isset($request_data['period'])){
             $start_date = Carbon::parse($request_data['from'])->startOfDay();
             $end_date = Carbon::parse($request_data['to'])->endOfDay();
             $model = $model->whereBetween($base_tbl.'.created_at',[$start_date,$end_date]);
