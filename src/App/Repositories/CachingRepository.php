@@ -40,7 +40,7 @@ class CachingRepository
             $keyString.='!'.$paramsStr.'!'.$graph;
         }
         $cacheKey = base64_encode($keyString);
-        $this->getCacheResults($cacheKey,$period,$graphParams);
+        return $this->getCacheResults($cacheKey,$period,$graphParams);
     }
 
     public  function getCacheResults($key,$period,$graphParams=null){
@@ -62,7 +62,11 @@ class CachingRepository
                 throw new \Exception("$period not found in allowed periods ".json_encode($periods));
             }
             $range = $periods[$period];
-            $bindings = array_merge(explode('~',$arr[3]),$range);
+            if($arr[3]){
+                $bindings = array_merge(explode('~',$arr[3]),$range);
+            } else {
+                $bindings = $range;
+            }
             $results = DB::connection($connection)->select($querySql,$bindings);
             if($graphParams){
                 $graphType = $arr[count($arr)-1];

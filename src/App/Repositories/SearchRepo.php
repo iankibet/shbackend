@@ -33,7 +33,6 @@ class SearchRepo
             $end_date = Carbon::parse($request_data['to'])->endOfDay();
             $model = $model->whereBetween($base_tbl.'.created_at',[$start_date,$end_date]);
         }
-
         if(isset($request_data['filter_value'])){
             $value = $request_data['filter_value'];
 
@@ -87,11 +86,6 @@ class SearchRepo
         }
         unset($request_data['page']);
         $data->appends($request_data);
-//        if($pagination){
-//            $pagination = $data->links()->__toString();
-//            $data = $data->toArray();
-//            $data['pagination'] = $pagination;
-//        }
         if(isset($request_data['download_csv'])){
             $csv_data = $data['data'];
             if(count($csv_data)){
