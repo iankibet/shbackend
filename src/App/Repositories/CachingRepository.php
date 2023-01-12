@@ -14,10 +14,10 @@ class CachingRepository
     {
 
     }
-    public function getCachedQueryResults($query,$graph=null, ...$graphParams){
+    public function getCachedQueryResults($query,$period=null,$graph=null,...$graphParams,){
         $table = $query->getModel()->getTable();
         $originalBindings = $query->getBindings();;
-        $period = request('period');
+        $period = request('period',$period);
         if($period == 'custom'){
             $from = Carbon::parse(request('from'));
             $to = Carbon::parse(request('to'));
@@ -80,6 +80,7 @@ class CachingRepository
     public function getCachePeriods(){
         $periods = [
             'today'=>[now()->startOfDay(),now()->endOfDay()],
+            'yesterday'=>[now()->subDays(1)->startOfDay(),now()->subDay(1)->endOfDay()],
             '7_days'=>[now()->subDays(7)->startOfDay(),now()->endOfDay()],
             'this_week'=>[now()->startOfWeek(),now()->endOfWeek()],
             'this_month'=>[now()->startOfMonth(),now()->endOfMonth()],

@@ -13,9 +13,9 @@ class ShRepository
     public static function beginAutoSaveModel($model,array $data=[],array $forceFill = []){
         return ChainModelSaver::beginAutoSaveModel($model,$data,$forceFill);
     }
-    public static function getCachedQueryResults($query,$graphType=null,...$graphFields){
+    public static function getCachedQueryResults($query,$period=null){
         $repo = new CachingRepository();
-        return $repo->getCachedQueryResults($query);
+        return $repo->getCachedQueryResults($query,$period);
     }
     public static function getChartData($query,$type='stock',$fields=[],$date_field='created_at'){
         return GraphStatsRepository::getDrawables($query,$type,$fields,$date_field);
