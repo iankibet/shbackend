@@ -42,11 +42,10 @@ class CachingRepository
         $cacheKey = base64_encode($keyString);
         return $this->getCacheResults($cacheKey,$period,$graphParams);
     }
-
-    public  function getCacheResults($key,$period,$graphParams=null){
+    public  function getCacheResults($key,$period,$graphParams=null,$cache=false){
         $cache_key = $key.'_'.$period;
         $results = Cache::get($cache_key);
-        if(!$results){
+        if(!$results || $cache){
             $this->setCacheKey($key,$graphParams);
             $arr = explode('!',base64_decode($key));
             $sql = $arr[2];
@@ -97,12 +96,16 @@ class CachingRepository
         $periods['all_time'] = [Carbon::create(2018), now()->endOfDay()];
         return $periods;
     }
-    public function cacheKeyPeriods($key){
+    public function cacheKeyPeriods($key,$graphData = null){
+        $keys = $this->getCacheKeys();
         $periods = array_keys($this->getCachePeriods());
         foreach ($periods as $period){
-            $this->getCacheResults($key,$period,true);
+            if(!is_array($graphData)){
+                $graphData = null;
+            }
+            $this->getCacheResults($key,$period,$graphData,true);
         }
-        $this->setCacheKey($key);
+        $this->setCacheKey($key,$graphData);
     }
     public function getCacheKeys(){
         return Cache::get($this->sh_cache_key,[]);

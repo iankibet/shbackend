@@ -33,13 +33,13 @@ class CacheData extends Command
         if($this->argument('action') == 'clear') {
             $repo->emptyCacheKeys();
         } else {
-//            $repo->
             $cacheKeys = $repo->getCacheKeys();
-            foreach ($cacheKeys as $key=>$lastUpdated){
-
-                $res = dispatch(function() use ($key,$repo){
-                    $repo->cacheKeyPeriods($key);
+            foreach ($cacheKeys as $key=>$value){
+                $this->info("Dispaching $key");
+                $res = dispatch(function() use ($key,$repo,$value){
+                    $repo->cacheKeyPeriods($key, @$value['graphData']);
                 })->onQueue('low');
+                $this->info("Done");
             }
         }
 
