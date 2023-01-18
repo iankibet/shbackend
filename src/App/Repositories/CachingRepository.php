@@ -51,11 +51,17 @@ class CachingRepository
             $sql = $arr[2];
             $table = $arr[1];
             $connection = $arr[0];
+            $groupBy = null;
+            if(strpos($sql,"group by")){
+                $sqlArr = explode('group by',$sql);
+                $sql = $sqlArr[0];
+                $groupBy = "group by ".$sqlArr[1];
+            }
             $joiner = "where";
             if(strpos($sql,"where")){
                 $joiner = "and";
             }
-            $querySql ="$sql $joiner  `$table`.`created_at` between ? and ?";
+            $querySql ="$sql $joiner  `$table`.`created_at` between ? and ? ".$groupBy;
             $periods = $this->getCachePeriods();
             if(!isset($periods[$period])){
                 throw new \Exception("$period not found in allowed periods ".json_encode($periods));
