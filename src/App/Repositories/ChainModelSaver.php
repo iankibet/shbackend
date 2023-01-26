@@ -126,6 +126,17 @@ class ChainModelSaver
         return $modelSaver->saveModel(self::$model,self::$data,self::$forceFill);
     }
 
+    public static function response(){
+        $model = self::save();
+        $modelName  = strtolower(class_basename($model));
+        $l = substr($modelName,0,1);
+        $modelName = substr_replace($modelName,strtolower($l),0,1);
+        abort(response([
+            'status'=>'success',
+            $modelName=>$model
+        ],201));
+    }
+
     public static function commit(){
         return self::save();
     }

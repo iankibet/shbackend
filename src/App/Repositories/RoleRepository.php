@@ -312,6 +312,12 @@ class RoleRepository
         $allowed_urls[] = '';
         $allowed_urls[] = 'auth/user';
         $allowed_urls[] = 'auth/password';
+        $allowed_urls[] = 'sh-ql';
+        $allowed_urls[] = 'sh-ql/store';
+        $allowed_urls[] = 'sh-ql/update';
+        $allowed_urls[] = 'sh-ql/edit';
+        $allowed_urls[] = 'sh-ql/create';
+        $allowed_urls[] = 'sh-ql/add';
         if (strpos($current, 'api') !== false) {
             $current = substr_replace($current, '', 0, 4);
         }
