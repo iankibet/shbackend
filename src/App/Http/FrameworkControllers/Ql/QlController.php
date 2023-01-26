@@ -4,6 +4,7 @@ namespace Iankibet\Shbackend\App\Http\FrameworkControllers\Ql;
 
 use App\Http\Controllers\Controller;
 use GraphQL\Parser\Parser;
+use Iankibet\Shbackend\App\GraphQl\GraphQlRepository;
 use Iankibet\Shbackend\App\Repositories\SearchRepo;
 use Iankibet\Shbackend\App\Repositories\ShRepository;
 use Illuminate\Support\Str;
@@ -12,38 +13,16 @@ class QlController extends Controller
 {
     //
     protected $related = [];
-    public function query(){
+    public function handleQuery(){
         $parser = new Parser();
         $query = request('query');
         $queryString = "query $query";
         $parser->parse($queryString);
+        $graphQlRepo = new GraphQlRepository();
         if($parser->queryIsValid()){
             $document = $parser->getParsedDocument();
-            $selections = $document['definitions'][0]['selectionSet']['selections'];
-            $modelName = $selections[0]['name']['value'];
-            $selectionSet = $selections[0]['selectionSet'];
-            $arguments = $this->getSelectionArguments($selections[0]);
-            $fields = $this->getSelectionFields($selectionSet);
-            $model = $this->getModelConfig($modelName)->model;
-            $fields = array_filter($fields,function($field){
-               return strpos($field,'.') == !1;
-            });
-            $relatedFields = [];
-            foreach ($this->related as $relation=>$keys){
-                $fields[] = $relation.'_id';
-                $formattedKeys = array_map(function($field){
-                    $arr = explode('.',$field);
-                    return $arr[count($arr)-1];
-                },$keys);
-                $relatedFields[] = $relation.':id,'.implode(',',$formattedKeys);
-
-            }
-            $query = $model->with($relatedFields)->select($fields);
-            if(count($arguments)){
-                $query = $query->where($arguments);
-            }
-            return SearchRepo::of($query)->response();
-
+            $query = $graphQlRepo->getQueryFromDocument($document);
+            return SearchRepo::of(array_values($query)[0])->response();
         }
     }
     protected function getSelectionFields($modelSelections,$prefix=null){
