@@ -61,6 +61,9 @@ class QlController extends Controller
         return $argumentArr;
     }
     public function createModel($slug){
+        if(request('id')){
+            return $this->updateModel($slug,request('id'));
+        }
         $modelConfig = $this->getModelConfig($slug);
         $model = $modelConfig->model;
         $forceFill = $modelConfig->forceFill ?? [];
@@ -85,7 +88,6 @@ class QlController extends Controller
     }
 
     protected function getModelConfig($slug){
-        $slug = Str::singular($slug);
         $modelConfig = config('shql.'.$slug);
         if(!$modelConfig){
             throw new \Exception("($slug) Sh model slug does not exist");

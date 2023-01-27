@@ -5,6 +5,12 @@ use Illuminate\Support\Str;
 
 class GraphQlRepository
 {
+    protected $userId;
+    public function __construct()
+    {
+        $this->userId = request()->user()->id;
+    }
+
     public function getQueryFromDocument($document){
         $document = json_decode(json_encode($document));
         $sets = [
@@ -101,6 +107,21 @@ class GraphQlRepository
         $modelConfig = json_decode($modelConfig);
         $model = new $modelConfig->model;
         if(isset($modelConfig->where)){
+            $userId = $this->userId;
+            $where = array_map(function($value) use($userId){
+                if(!is_array($value)){
+                    return str_replace('{current_user_id}',$userId,$value);
+                } else {
+                    return array_map(function ($val) use($userId){
+                       if(!is_array($val)){
+                           return str_replace('{current_user_id}',$userId,$val);
+                       } else {
+                           dd($val);
+                       }
+                       return $val;
+                    },$value);
+                }
+            },$where);
             $model = $model->where($where);
         }
         $modelConfig->model = $model;
