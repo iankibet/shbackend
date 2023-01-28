@@ -9,6 +9,7 @@
 namespace Iankibet\Shbackend\App\Repositories;
 
 use App\Models\Core\DepartmentPermission;
+use Iankibet\Shbackend\App\GraphQl\GraphQlRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -293,6 +294,27 @@ class RoleRepository
         }
         return $allowed_urls;
     }
+    protected function getAllowedQueries(){
+        $permissionsRepo = new PermissionsRepository();
+        $user = $this->user;
+        $role = $user->role;
+        if($role == 'admin'){
+            $modules = DepartmentPermission::where('department_id',$user->department_id)->get();
+            foreach ($modules as $module){
+                $slugs = @json_decode($module->permissions);
+                if($slugs){
+                    $permissions[] = $module->module;
+                    foreach ($slugs as $slug){
+                        $permissions[] = $module->module.'.'.$slug;
+                    }
+                }
+            }
+           $allowedQlQueries = $permissionsRepo->getAllowedQlQueries($permissions);
+        } else {
+            $allowedQlQueries = $permissionsRepo->getAllowedQlQueries();
+        }
+        return $allowedQlQueries;
+    }
 
     protected function authorize($backend)
     {
@@ -303,11 +325,19 @@ class RoleRepository
         $current = str_replace("//", "/", $current);
         $current = str_replace("//", "/", $current);
         $user = $this->user;
+        if (strpos($current, 'api') !== false) {
+            $current = substr_replace($current, '', 0, 4);
+        }
+       if($current == 'sh-ql'){
+           $allowedQlQueries = $this->getAllowedQueries();
+           $graphRepo = new GraphQlRepository();
+           $queries = $graphRepo->getQueryModels(request('query'));
+           $diff = array_diff($queries,$allowedQlQueries);
+           if(count($diff)) {
+                $this->unauthorizedQl($diff, $allowedQlQueries);
+           }
+       }
         $allowed_urls = $this->getAllowedUrls();
-//        return $allowed_urls;
-
-//        dd($this->path,$business_urls);
-//        dd($current,$allowed_urls);
         $allowed_urls[] = '/';
         $allowed_urls[] = '';
         $allowed_urls[] = 'auth/user';
@@ -318,12 +348,20 @@ class RoleRepository
         $allowed_urls[] = 'sh-ql/edit';
         $allowed_urls[] = 'sh-ql/create';
         $allowed_urls[] = 'sh-ql/add';
-        if (strpos($current, 'api') !== false) {
-            $current = substr_replace($current, '', 0, 4);
-        }
         if (!in_array($current, $allowed_urls)) {
             $this->unauthorized($current,$allowed_urls);
         }
+    }
+
+    public function unauthorizedQl($diff,$allowedQlQueries){
+        $message = "User not allowed to access some query params/fields";
+        $res = 'Following queries ['.implode(',',$diff).'] Not allowed in ['.implode(',',$allowedQlQueries).']';
+        $array = [
+            'message'=>  "Not authorized to access this page/resource/endpoint",
+            'allowedQueries'=>$allowedQlQueries,
+            'diff'=>array_values($diff)
+        ];
+        abort(response($array,403));
     }
 
     public function filterBackend($backend)

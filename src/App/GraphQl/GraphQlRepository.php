@@ -1,6 +1,7 @@
 <?php
 namespace Iankibet\Shbackend\App\GraphQl;
 
+use GraphQL\Parser\Parser;
 use Illuminate\Support\Str;
 
 class GraphQlRepository
@@ -10,6 +11,8 @@ class GraphQlRepository
     {
         $this->userId = request()->user()->id;
     }
+
+
 
     public function getQueryFromDocument($document){
         $document = json_decode(json_encode($document));
@@ -115,8 +118,6 @@ class GraphQlRepository
                     return array_map(function ($val) use($userId){
                        if(!is_array($val)){
                            return str_replace('{current_user_id}',$userId,$val);
-                       } else {
-                           dd($val);
                        }
                        return $val;
                     },$value);
@@ -126,5 +127,39 @@ class GraphQlRepository
         }
         $modelConfig->model = $model;
         return $modelConfig;
+    }
+
+    public function getQueryModels($query){
+        $parser = new Parser();
+        $queryString = "query $query";
+        $parser->parse($queryString);
+        if(!$parser->queryIsValid()){
+            return [];
+        }
+        $definitions = $parser->getParsedDocument()['definitions'];
+        $allQueries = [];
+        foreach ($definitions as $definition){
+            $definition = json_decode(json_encode($definition));
+            $queries = $this->getSelectionQuery($definition->selectionSet);
+            $allQueries = array_merge($queries,$allQueries);
+        }
+        return $allQueries;
+    }
+
+    protected function getSelectionQuery($selectionSet, $parentSlug = null, $foundSlugs = []){
+        if($parentSlug){
+            $foundSlugs[] = $parentSlug;
+        }
+        foreach ($selectionSet->selections as $selection){
+            $slug = $selection->name->value;
+            if(isset($selection->selectionSet) && $selection->selectionSet){
+                $fields = [];
+                $newSlugs = $this->getSelectionQuery($selection->selectionSet, ltrim($parentSlug.'.'.$slug,'.'));
+                if($newSlugs){
+                    $foundSlugs = array_merge($foundSlugs,$newSlugs);
+                }
+            }
+        }
+        return $foundSlugs;
     }
 }

@@ -26,7 +26,8 @@ class PermissionsRepository
     public function getAllowedUrls($permissions=null){
         $modules = json_decode(Storage::get($this->cache_name));
         $allUrls = [];
-        foreach ($modules as $permission=>$urls){
+        foreach ($modules as $permission=>$moduleData){
+            $urls = $moduleData->urls;
             if($permissions || $this->role == 'admin') {
                 $permissions[] = 'common';
                 if(in_array($permission,$permissions)){
@@ -37,6 +38,22 @@ class PermissionsRepository
             }
         }
         return $allUrls;
+    }
+    public function getAllowedQlQueries($permissions=null){
+        $modules = json_decode(Storage::get($this->cache_name));
+        $allQlQueries = [];
+        foreach ($modules as $permission=>$moduleData){
+            $qlQueries = $moduleData->qlQueries;
+            if($permissions || $this->role == 'admin') {
+                $permissions[] = 'common';
+                if(in_array($permission,$permissions)){
+                    $allQlQueries = array_merge($allQlQueries,$qlQueries);
+                }
+            } else {
+                $allQlQueries = array_merge($allQlQueries,$qlQueries);
+            }
+        }
+        return $qlQueries;
     }
 
     public function backupPermisions($role = null){
@@ -57,7 +74,10 @@ class PermissionsRepository
                 $res = $this->getModuleUrls($moduleData,$main);
                 $urls = $res['urls'];
                 $children = $res['children'];
-                $this->permissions[$module] = $urls;
+                $this->permissions[$module] = [
+                   'urls'=>$res['urls'],
+                    'qlQueries'=>$res['qlQueries']
+                ];
                 if($children){
                     if(!$main){
                         $main = trim($moduleData->main,'/');
@@ -82,7 +102,10 @@ class PermissionsRepository
                     $realMain = trim($main,'/').'/'.$child->main;
                 }
                 $res = $this->getModuleUrls($child,$realMain);
-                $this->permissions[$slug] = $res['urls'];
+                $this->permissions[$slug] = [
+                  'urls'=>$res['urls'],
+                  'qlQueries'=>$res['qlQueries']
+                ];
 //                if($slug == 'orders.orders.list_self_orders'){
 //                    dd($realMain,$realMain2,$main,$child,$res);
 //                }
@@ -128,9 +151,18 @@ class PermissionsRepository
                 }
             }
         }
+        $qlQueries = [];
+        if(isset($module->qlQueries)){
+            if(is_array($module->qlQueries)){
+                $qlQueries = $module->qlQueries;
+            } else {
+                $qlQueries[] = $module->qlQueries;
+            }
+        }
         return [
           'urls'=>$childUrls,
-          'children'=>$children
+          'children'=>$children,
+          'qlQueries'=>$qlQueries
         ];
     }
 }
