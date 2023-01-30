@@ -53,7 +53,7 @@ class PermissionsRepository
                 $allQlQueries = array_merge($allQlQueries,$qlQueries);
             }
         }
-        return $qlQueries;
+        return $allQlQueries;
     }
 
     public function backupPermisions($role = null){

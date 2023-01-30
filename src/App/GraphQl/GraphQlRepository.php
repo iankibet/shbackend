@@ -35,7 +35,8 @@ class GraphQlRepository
                                     $withString = 'id,'.implode(',',$keys);
                                     $selectKeys = explode(',',$withString);
                                     $selection = $val['selection'];
-                                    $results = $results->with(['user'=>function($query) use($selection,$selectKeys){
+                                    $selected = $selection->name->value;
+                                    $results = $results->with([$selected=>function($query) use($selection,$selectKeys){
                                         return $this->getSelectionArguments($query,$selection)->select($selectKeys);
                                     }]);
                                 }
@@ -116,10 +117,10 @@ class GraphQlRepository
                     return str_replace('{current_user_id}',$userId,$value);
                 } else {
                     return array_map(function ($val) use($userId){
-                       if(!is_array($val)){
-                           return str_replace('{current_user_id}',$userId,$val);
-                       }
-                       return $val;
+                        if(!is_array($val)){
+                            return str_replace('{current_user_id}',$userId,$val);
+                        }
+                        return $val;
                     },$value);
                 }
             },$where);
