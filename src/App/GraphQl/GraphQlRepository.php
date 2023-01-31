@@ -97,6 +97,7 @@ class GraphQlRepository
     }
 
     protected function getModelQuery($slug){
+        $slug = Str::plural($slug);
         $modelConfig = config('shql.'.$slug);
         if(!$modelConfig){
             throw new \Exception("($slug) Sh model slug does not exist");

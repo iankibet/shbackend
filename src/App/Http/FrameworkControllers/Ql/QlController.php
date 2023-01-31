@@ -22,7 +22,25 @@ class QlController extends Controller
         if($parser->queryIsValid()){
             $document = $parser->getParsedDocument();
             $query = $graphQlRepo->getQueryFromDocument($document);
-            return SearchRepo::of(array_values($query)[0])->response();
+            if(request('per_page')|| request('paginated')){
+                return SearchRepo::of(array_values($query)[0])->response();
+            } else {
+                foreach ($query as $key=>$ormQuery){
+                    $records = $ormQuery->get();
+                    if(Str::singular($key) == $key){
+                        $query[$key] = $records[0];
+                    } else {
+                        $query[$key] = $records;
+                    }
+                }
+                return $query;
+            }
+        } else {
+            return response([
+               'status'=>'failed',
+               'message'=>'Invalid Graphql Query',
+                'query'=>$queryString
+            ],415);
         }
     }
     protected function getSelectionFields($modelSelections,$prefix=null){
