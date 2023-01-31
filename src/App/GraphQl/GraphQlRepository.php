@@ -74,6 +74,30 @@ class GraphQlRepository
         }
         return $query;
     }
+    protected function getArgumentsAsArr($selection){
+        $queryArguments = [];
+//        dd($selection->arguments);
+        foreach ($selection->arguments as $argument){
+
+            $operator = 'like';
+            $equalTypes = ['IntValue','BooleanValue'];
+            $key = $argument->name->value;
+            if(in_array($argument->value->kind,$equalTypes)){
+                $operator = '=';
+            }
+            if($argument->value->kind == 'ListValue'){
+                $values = [];
+                foreach ($argument->value->values as $valObject){
+                    $values[] = $valObject->value;
+                }
+            } else {
+                $value = $argument->value->value;
+            }
+            $queryArguments[$key] = $value;
+
+        }
+        return $queryArguments;
+    }
 
     function getSelectionSetFields($set){
         $fields = [];
@@ -94,6 +118,15 @@ class GraphQlRepository
             'fields'=>$fields,
             'sets'=>$sets
         ];
+    }
+    protected function getSelectionFieldsAsArr($selections){
+        $fields = [];
+        foreach ($selections as $selection){
+            if(!$selection->selectionSet){
+                $fields[] = $selection->name->value;
+            }
+        }
+        return $fields;
     }
 
     protected function getModelQuery($slug){
@@ -132,11 +165,19 @@ class GraphQlRepository
     }
 
     public function getQueryModels($query){
+        if(strpos($query,'query') === false && strpos($query,'mutation') === false) {
+            $queryString = "query $query";
+        } else {
+            $queryString = $query;
+        }
         $parser = new Parser();
-        $queryString = "query $query";
         $parser->parse($queryString);
         if(!$parser->queryIsValid()){
-            return [];
+           abort(response([
+               'status'=>'failed',
+               'message'=>'Invalid Graphql Query',
+               'query'=>$queryString
+           ],415));
         }
         $definitions = $parser->getParsedDocument()['definitions'];
         $allQueries = [];
@@ -146,6 +187,32 @@ class GraphQlRepository
             $allQueries = array_merge($queries,$allQueries);
         }
         return $allQueries;
+    }
+    public function getMutationArguments($query){
+        if(strpos($query,'query') === false && strpos($query,'mutation') === false) {
+            $queryString = "query $query";
+        } else {
+            $queryString = $query;
+        }
+        $parser = new Parser();
+        $parser->parse($queryString);
+        if(!$parser->queryIsValid()){
+           abort(response([
+               'status'=>'failed',
+               'message'=>'Invalid Graphql Query',
+               'query'=>$queryString
+           ],415));
+        }
+        $selection = $parser->getParsedDocument()['definitions'][0]['selectionSet']['selections'][0];
+        $mutation = $selection['name']['value'];
+        $selection = json_decode(json_encode($selection));
+        $arguments = $this->getArgumentsAsArr($selection);
+        $selectionFields = $this->getSelectionFieldsAsArr($selection->selectionSet->selections);
+        return (object)[
+            'mutation'=>$mutation,
+            'arguments'=>$arguments,
+            'selectionFields'=>$selectionFields
+        ];
     }
 
     protected function getSelectionQuery($selectionSet, $parentSlug = null, $foundSlugs = []){

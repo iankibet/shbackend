@@ -341,16 +341,22 @@ class RoleRepository
         if ($current == 'sh-ql') {
             $allowedQlQueries = $this->getAllowedQueries();
             $graphRepo = new GraphQlRepository();
+
             $queries = $graphRepo->getQueryModels(request('query'));
+//            dd($queries);
             $pluralQueries = [];
-            foreach ($queries as $query) {
-                $arr = explode('.',$query);
-                $arr[0] = Str::plural($arr[0]);
-                $pluralQueries[] = implode('.',$arr);
-            }
-            $diff = array_diff($pluralQueries, $allowedQlQueries);
-            if (count($diff)) {
-                $this->unauthorizedQl($diff, $allowedQlQueries);
+            if(\request()->method() == 'POST') {
+                $pluralQueries = $queries;
+            } else {
+                foreach ($queries as $query) {
+                    $arr = explode('.',$query);
+                    $arr[0] = Str::plural($arr[0]);
+                    $pluralQueries[] = implode('.',$arr);
+                }
+                $diff = array_diff($pluralQueries, $allowedQlQueries);
+                if (count($diff)) {
+                    $this->unauthorizedQl($diff, $allowedQlQueries);
+                }
             }
         }
         $allowed_urls = $this->getAllowedUrls();

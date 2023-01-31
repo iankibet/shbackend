@@ -16,7 +16,11 @@ class QlController extends Controller
     public function handleQuery(){
         $parser = new Parser();
         $query = request('query');
-        $queryString = "query $query";
+        if(strpos($query,'query') === false && strpos($query,'mutation') === false) {
+            $queryString = "query $query";
+        } else {
+            $queryString = $query;
+        }
         $parser->parse($queryString);
         $graphQlRepo = new GraphQlRepository();
         if($parser->queryIsValid()){
@@ -39,6 +43,42 @@ class QlController extends Controller
             return response([
                'status'=>'failed',
                'message'=>'Invalid Graphql Query',
+                'query'=>$queryString
+            ],415);
+        }
+    }
+    public function handleMutation(){
+        $parser = new Parser();
+        $query = request('query');
+        if(strpos($query,'query') === false && strpos($query,'mutation') === false) {
+            $queryString = "query $query";
+        } else {
+            $queryString = $query;
+        }
+        $parser->parse($queryString);
+        $graphQlRepo = new GraphQlRepository();
+        if($parser->queryIsValid()){
+            $mutationData = $graphQlRepo->getMutationArguments($queryString);
+            $mutation = $mutationData->mutation;
+            $selectFields = $mutationData->selectionFields;
+            $arguments = $mutationData->arguments;
+            $modelConfig = $this->getModelConfig($mutation,true);
+            $saved = ShRepository::beginAutoSaveModel($modelConfig->model)
+                ->setData($arguments)
+                ->setValidationRulesFromFillable()
+                ->forceFill(@(array)$modelConfig->forceFill)
+                ->save();
+            $responseModel = [];
+            foreach ($selectFields as $selectField){
+                $responseModel[$selectField] = $saved->$selectField;
+            }
+            return [
+              $mutation=>$responseModel
+            ];
+        } else {
+            return response([
+                'status'=>'failed',
+                'message'=>'Invalid Graphql Query',
                 'query'=>$queryString
             ],415);
         }
@@ -105,16 +145,19 @@ class QlController extends Controller
             ->response();
     }
 
-    protected function getModelConfig($slug){
-        $modelConfig = config('shql.'.$slug);
+    protected function getModelConfig($slug,$mutation = false){
+        if($mutation){
+            $modelConfig = config('shqlmutations.'.$slug);
+        } else {
+            $modelConfig = config('shql.'.$slug);
+        }
         if(!$modelConfig){
-            throw new \Exception("($slug) Sh model slug does not exist");
+            throw new \Exception("($slug) mutation/query does not exist");
         }
         $modelConfig = json_encode($modelConfig);
         $modelConfig = str_replace('{current_user_id}',@request()->user()->id,$modelConfig);
         $modelConfig = str_replace('{user_id}',@request()->user()->id,$modelConfig);
         $modelConfig = json_decode($modelConfig);
-        $modelConfig->model = new $modelConfig->model;
         return $modelConfig;
     }
 }

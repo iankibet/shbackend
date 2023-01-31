@@ -53,6 +53,8 @@ class SharaServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/migrations');
         $this->publishes([
             __DIR__.'/config/shql.php' => config_path('shql.php'),
+        ]);$this->publishes([
+            __DIR__.'/config/shqlmutations.php' => config_path('shqlmutations.php'),
         ]);
     }
 }
