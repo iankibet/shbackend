@@ -14,16 +14,16 @@ class PermissionsRepository
         if($this->user){
             $this->role = $this->user->role;
             $this->cache_name = 'permissions/'.$this->role.'_cache.json';
-            if(!Storage::exists($this->cache_name)){
-                $this->backupPermisions();
-            }
-            if(app()->environment() == 'local'){
-                $this->backupPermisions();
-            }
         }
     }
 
     public function getAllowedUrls($permissions=null){
+        if(!Storage::exists($this->cache_name)){
+            $this->backupPermisions();
+        }
+        if(app()->environment() == 'local'){
+            $this->backupPermisions();
+        }
         $modules = json_decode(Storage::get($this->cache_name));
         $allUrls = [];
         foreach ($modules as $permission=>$moduleData){

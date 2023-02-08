@@ -54,21 +54,60 @@ class GraphQlRepository
         $queryArguments = [];
 //        dd($selection->arguments);
         foreach ($selection->arguments as $argument){
-
+            $whereSigns = [
+              'gte'=>'>=',
+                'lte'=>'<=',
+                'gt'=>'>',
+                'lt'=>'<',
+                'eq'=>'='
+            ];
+            $whereInSigns = [
+              'in'
+            ];
+            $whereNotInSigns = [
+              'not_in'
+            ];
+            $whereBetweenSigns = [
+                'btw'
+            ];
             $operator = 'like';
             $equalTypes = ['IntValue','BooleanValue'];
             if(in_array($argument->value->kind,$equalTypes)){
+                $value = $argument->value->value;
                 $operator = '=';
-            }
-            if($argument->value->kind == 'ListValue'){
+                $query = $query->where($argument->name->value,$operator,$value);
+            } else if($argument->value->kind == 'ListValue'){
                 $values = [];
                 foreach ($argument->value->values as $valObject){
                     $values[] = $valObject->value;
                 }
                 $query = $query->whereIn($argument->name->value,$values);
-            } else {
-                $value = $argument->value->value;
-                $query = $query->where($argument->name->value,$operator,$value);
+            } else if ($argument->value->kind == 'ObjectValue') {
+                foreach ($argument->value->fields as $objectField) {
+                    $filterMethod = ltrim($objectField->name->value,'-_');
+                    $filterValue = $objectField->value;
+                    if($filterValue->kind == 'ListValue'){
+                        $values = [];
+                        foreach ($objectField->value->values as $valObject){
+                            $values[] = $valObject->value;
+                        }
+                        $value = $values;
+                    } else {
+                        $value = $filterValue->value;
+                    }
+                    if(in_array($filterMethod,array_keys($whereSigns))) {
+                        $query = $query->where($argument->name->value,$whereSigns[$filterMethod],$value);
+                    }
+                    else if(in_array($filterMethod,$whereInSigns)) {
+                        $query = $query->whereIn($argument->name->value,$value);
+                    }
+                    else if(in_array($filterMethod,$whereNotInSigns)) {
+                        $query = $query->whereNotIn($argument->name->value,$value);
+                    }
+                    else if(in_array($filterMethod,$whereBetweenSigns)) {
+                        $query = $query->whereBetween($argument->name->value,$value);
+                    }
+                }
             }
 
         }
@@ -129,11 +168,16 @@ class GraphQlRepository
         return $fields;
     }
 
-    protected function getModelQuery($slug){
-        $slug = Str::plural($slug);
-        $modelConfig = config('shql.'.$slug);
+    public function getModelQuery($slug, $mutation=false){
+
+        if($mutation){
+            $modelConfig = config('shqlmutations.'.$slug);
+        } else {
+            $slug = Str::plural($slug);
+            $modelConfig = config('shql.'.$slug);
+        }
         if(!$modelConfig){
-            throw new \Exception("($slug) Sh model slug does not exist");
+            throw new \Exception("($slug) mutation/query does not exist");
         }
         $where = null;
         if(isset($modelConfig['where'])){

@@ -63,7 +63,11 @@ class QlController extends Controller
             $selectFields = $mutationData->selectionFields;
             $arguments = $mutationData->arguments;
             $modelConfig = $this->getModelConfig($mutation,true);
-            $saved = ShRepository::beginAutoSaveModel($modelConfig->model)
+            $model = $modelConfig->model;
+            if(isset($modelConfig->type) && $modelConfig->type == 'update'){
+                $model = $model->where('id',$arguments['id'])->first();
+            }
+            $saved = ShRepository::beginAutoSaveModel($model)
                 ->setData($arguments)
                 ->setValidationRulesFromFillable()
                 ->forceFill(@(array)$modelConfig->forceFill)
@@ -146,18 +150,7 @@ class QlController extends Controller
     }
 
     protected function getModelConfig($slug,$mutation = false){
-        if($mutation){
-            $modelConfig = config('shqlmutations.'.$slug);
-        } else {
-            $modelConfig = config('shql.'.$slug);
-        }
-        if(!$modelConfig){
-            throw new \Exception("($slug) mutation/query does not exist");
-        }
-        $modelConfig = json_encode($modelConfig);
-        $modelConfig = str_replace('{current_user_id}',@request()->user()->id,$modelConfig);
-        $modelConfig = str_replace('{user_id}',@request()->user()->id,$modelConfig);
-        $modelConfig = json_decode($modelConfig);
-        return $modelConfig;
+        $gqlRepo = new GraphQlRepository();
+        return $gqlRepo->getModelQuery($slug,$mutation);
     }
 }
