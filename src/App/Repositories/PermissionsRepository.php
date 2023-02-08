@@ -2,6 +2,7 @@
 
 namespace Iankibet\Shbackend\App\Repositories;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class PermissionsRepository
@@ -77,6 +78,10 @@ class PermissionsRepository
     }
 
     public function backupPermisions($role = null){
+        $isWriting = Cache::get('isWriting',false);
+        if($isWriting)
+            return;
+        Cache::put('isWriting',true);
         if($role){
             $this->role = $role;
             $this->cache_name = 'permissions/'.$this->role.'_cache.json';
@@ -95,7 +100,7 @@ class PermissionsRepository
                 $urls = $res['urls'];
                 $children = $res['children'];
                 $this->permissions[$module] = [
-                   'urls'=>$res['urls'],
+                    'urls'=>$res['urls'],
                     'qlQueries'=>$res['qlQueries'],
                     'qlMutations'=>$res['qlMutations']
                 ];
@@ -108,6 +113,7 @@ class PermissionsRepository
             }
         }
         Storage::put($this->cache_name, json_encode($this->permissions));
+        Cache::forget('isWriting');
     }
 
     protected function workOnchildren($children,$main,$module){
@@ -124,9 +130,9 @@ class PermissionsRepository
                 }
                 $res = $this->getModuleUrls($child,$realMain);
                 $this->permissions[$slug] = [
-                  'urls'=>$res['urls'],
-                  'qlQueries'=>$res['qlQueries'],
-                  'qlMutations'=>$res['qlMutations'],
+                    'urls'=>$res['urls'],
+                    'qlQueries'=>$res['qlQueries'],
+                    'qlMutations'=>$res['qlMutations'],
                 ];
 //                if($slug == 'orders.orders.list_self_orders'){
 //                    dd($realMain,$realMain2,$main,$child,$res);
@@ -163,7 +169,7 @@ class PermissionsRepository
             foreach ($module->urls as $url){
                 $main = $url;
                 if(str_starts_with($url,'/')) {
-                        $url = ltrim($url,'/');
+                    $url = ltrim($url,'/');
                 } else {
                     $url = $parentMain.'/'.$url;
                 }
@@ -190,10 +196,10 @@ class PermissionsRepository
             }
         }
         return [
-          'urls'=>$childUrls,
-          'children'=>$children,
-          'qlQueries'=>$qlQueries,
-          'qlMutations'=>$qlMutations,
+            'urls'=>$childUrls,
+            'children'=>$children,
+            'qlQueries'=>$qlQueries,
+            'qlMutations'=>$qlMutations,
         ];
     }
 }
