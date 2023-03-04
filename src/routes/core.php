@@ -20,8 +20,7 @@ Route::group(['middleware' => ['api'], 'prefix'=>'api'], function () {
     Route::post('auth/forgot',[$apiAuthController,'forgotPassword']);
     Route::post('auth/register',[$apiAuthController,'register']);
 });
-
-$middleWares = env('SH_API_MIDDLEWARE','auth:sanctum');
+$middleWares = config('shconfig.api_middleware');
 $middleWares = explode(',',$middleWares);
 $middleWares[] = 'sh_auth';
 Route::group(['middleware' => $middleWares, 'prefix'=>'api'], function () {

@@ -19,13 +19,14 @@ class PermissionsRepository
     }
 
     public function getAllowedUrls($permissions=null){
-        if(!Storage::exists($this->cache_name)){
+        if(!Cache::get($this->cache_name)){
             $this->backupPermisions();
         }
         if(app()->environment() == 'local'){
             $this->backupPermisions();
         }
-        $modules = json_decode(Storage::get($this->cache_name));
+        $modules = Cache::get($this->cache_name);
+        $modules = json_decode(json_encode($modules));
         $allUrls = [];
         foreach ($modules as $permission=>$moduleData){
             $urls = $moduleData->urls;
@@ -78,42 +79,48 @@ class PermissionsRepository
     }
 
     public function backupPermisions($role = null){
-        $isWriting = Cache::get('isWriting',false);
+        $isWriting = Cache::get('permissionsUpdated',false);
         if($isWriting)
             return;
-        Cache::put('isWriting',true);
-        if($role){
-            $this->role = $role;
-            $this->cache_name = 'permissions/'.$this->role.'_cache.json';
-        }
-        $files = Storage::files($this->filesPath);
-        $permissions = [];
-        foreach ($files as $file){
-            $arr = explode('/',$file);
-            $module = str_replace('.json','',$arr[count($arr) - 1]);
-            $hasChildren = true;
-            $main = null;
-            $moduleData = json_decode(Storage::get($file));
-            $main = $moduleData->main;
-            if(isset($moduleData->roles) && in_array($this->role,$moduleData->roles)) {
-                $res = $this->getModuleUrls($moduleData,$main);
-                $urls = $res['urls'];
-                $children = $res['children'];
-                $this->permissions[$module] = [
-                    'urls'=>$res['urls'],
-                    'qlQueries'=>$res['qlQueries'],
-                    'qlMutations'=>$res['qlMutations']
-                ];
-                if($children){
-                    if(!$main){
-                        $main = trim($moduleData->main,'/');
+        Cache::put('permissionsUpdated',now()->timestamp);
+        try{
+            if($role){
+                $this->role = $role;
+                $this->cache_name = 'permissions/'.$this->role.'_cache.json';
+            }
+            $files = Storage::files($this->filesPath);
+            $permissions = [];
+            foreach ($files as $file){
+                $arr = explode('/',$file);
+                $module = str_replace('.json','',$arr[count($arr) - 1]);
+                $hasChildren = true;
+                $main = null;
+                $moduleData = json_decode(Storage::get($file));
+                $main = $moduleData->main;
+                if(isset($moduleData->roles) && in_array($this->role,$moduleData->roles)) {
+                    $res = $this->getModuleUrls($moduleData,$main);
+                    $urls = $res['urls'];
+                    $children = $res['children'];
+                    $this->permissions[$module] = [
+                        'urls'=>$res['urls'],
+                        'qlQueries'=>$res['qlQueries'],
+                        'qlMutations'=>$res['qlMutations']
+                    ];
+                    if($children){
+                        if(!$main){
+                            $main = trim($moduleData->main,'/');
+                        }
+                        $this->workOnchildren($children,$main,$module);
                     }
-                    $this->workOnchildren($children,$main,$module);
                 }
             }
+            Cache::put($this->cache_name, $this->permissions);
+            Cache::forget('permissionsUpdated');
+        }catch (\Exception $exception) {
+            Cache::forget('permissionsUpdated');
+            throw new \Exception($exception->getMessage());
         }
-        Storage::put($this->cache_name, json_encode($this->permissions));
-        Cache::forget('isWriting');
+
     }
 
     protected function workOnchildren($children,$main,$module){
