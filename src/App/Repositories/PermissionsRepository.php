@@ -45,7 +45,8 @@ class PermissionsRepository
         if(request()->method() == 'POST') {
             return $this->getAllowedMutations($permissions);
         } else {
-            $modules = json_decode(Storage::get($this->cache_name));
+            $modules = Cache::get($this->cache_name);
+            $modules = json_decode(json_encode($modules));
             $allQlQueries = [];
             foreach ($modules as $permission=>$moduleData){
                 $qlQueries = $moduleData->qlQueries;
@@ -62,7 +63,8 @@ class PermissionsRepository
         }
     }
     public function getAllowedMutations($permissions=null){
-        $modules = json_decode(Storage::get($this->cache_name));
+        $modules = Cache::get($this->cache_name);
+        $modules = json_decode(json_encode($modules));
         $allQlMutations = [];
         foreach ($modules as $permission=>$moduleData){
             $qlMutations = $moduleData->qlMutations;
