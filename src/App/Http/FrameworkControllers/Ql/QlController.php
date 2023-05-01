@@ -72,6 +72,10 @@ class QlController extends Controller
                 ->setValidationRulesFromFillable()
                 ->forceFill(@(array)$modelConfig->forceFill)
                 ->save();
+            if(isset($modelConfig->log)){
+                $log = $this->replaceLogVariables($modelConfig->log->log,$saved);
+                ShRepository::storeLog($modelConfig->log->slug,$log, $saved);
+            }
             $responseModel = [];
             foreach ($selectFields as $selectField){
                 $responseModel[$selectField] = $saved->$selectField;
@@ -86,6 +90,12 @@ class QlController extends Controller
                 'query'=>$queryString
             ],415);
         }
+    }
+    protected function replaceLogVariables($log,$model){
+        foreach ($model->getFillable() as $fillable){
+            $log = str_replace('{'.$fillable.'}',$model->$fillable,$log);
+        }
+        return $log;
     }
     protected function getSelectionFields($modelSelections,$prefix=null){
         $fields = [];

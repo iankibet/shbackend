@@ -174,7 +174,7 @@ class GraphQlRepository
             $modelConfig = config('shqlmutations.'.$slug);
         } else {
             $slug = Str::plural($slug);
-            $modelConfig = config('shql.'.$slug);
+            $modelConfig = config('shqlqueries.'.$slug);
         }
         if(!$modelConfig){
             throw new \Exception("($slug) mutation/query does not exist");

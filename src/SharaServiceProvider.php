@@ -52,7 +52,7 @@ class SharaServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/routes/sh-ql.route.php');
         $this->loadMigrationsFrom(__DIR__.'/migrations');
         $this->publishes([
-            __DIR__.'/config/shql.php' => config_path('shql.php'),
+            __DIR__.'/config/shqlqueries.php' => config_path('shqlqueries.php'),
         ]);
         $this->publishes([
             __DIR__.'/config/shqlmutations.php' => config_path('shqlmutations.php'),
