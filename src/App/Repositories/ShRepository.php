@@ -4,6 +4,7 @@ namespace Iankibet\Shbackend\App\Repositories;
 
 use App\Models\Core\Log;
 use App\Models\User;
+use Iankibet\Shbackend\App\Events\ShNewLog;
 use Illuminate\Support\Facades\Validator;
 use Jenssegers\Agent\Agent;
 use Monolog\LogRecord;
@@ -67,7 +68,7 @@ class ShRepository
         if ($user) {
             $id = $user->id;
         }
-        $newLog = Log::create([
+        $data = [
             'user_id' => $id,
             'model_id' => $model_id,
             'model' => $model_class,
@@ -75,17 +76,12 @@ class ShRepository
             'log' => $log,
             'device' => $device,
             'ip_address' => $ip
-        ]);
-        $logType = \App\Models\Core\LogType::where('slug', 'like', $slug)->count();
-        if (!$logType) {
-            $name = ucwords(str_replace('_', ' ', $slug));
-            \App\Models\Core\LogType::create([
-                'slug' => $slug,
-                'name' => $name,
-                'description' => $name,
-                'user_id' => 0
-            ]);
-        }
+        ];
+        ShNewLog::dispatch($data);
+        /**
+         * TODO Document how new logs are to be dispatched. It's as simple as storeLog methods dispatches a
+         * ShNewLog event with the data array as the first parameter.
+         */
     }
 
     public static function autoSaveModel($model, array $data, ?array $forceFill = [])

@@ -92,7 +92,8 @@ class QlController extends Controller
         }
     }
     protected function replaceLogVariables($log,$model){
-        foreach ($model->getFillable() as $fillable){
+        $modelArr = $model->toArray();
+        foreach ($modelArr as $fillable){
             $log = str_replace('{'.$fillable.'}',$model->$fillable,$log);
         }
         return $log;
