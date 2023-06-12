@@ -13,16 +13,22 @@ class CreateLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('logs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id');
-            $table->string('slug');
-            $table->longText('log');
-            $table->integer('model_id');
-            $table->longText('model');
-            $table->string('device')->nullable();
-            $table->timestamps();
-        });
+        try {
+            Schema::create('logs', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id');
+                $table->string('slug');
+                $table->longText('log');
+                $table->integer('model_id');
+                $table->longText('model');
+                $table->string('device')->nullable();
+                $table->timestamps();
+            });
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    
     }
 
     /**

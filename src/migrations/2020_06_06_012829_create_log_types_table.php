@@ -13,14 +13,20 @@ class CreateLogTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('log_types', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id');
-            $table->string('slug');
-            $table->string('name');
-            $table->longText('description')->nullable();
-            $table->timestamps();
-        });
+        try {
+            Schema::create('log_types', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id');
+                $table->string('slug');
+                $table->string('name');
+                $table->longText('description')->nullable();
+                $table->timestamps();
+            });
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    
     }
 
     /**
