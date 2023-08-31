@@ -100,7 +100,7 @@ class PermissionsRepository
                 $moduleData = json_decode(Storage::get($file));
                 $main = $moduleData->main;
                 $userRoles = [$this->role];
-                if($this->user->roles){
+                if(isset($this->user->roles)){
                     $userRoles = [];
                     foreach ($this->user->roles as $role){
                         $userRoles[] = $role->role;
