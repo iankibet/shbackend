@@ -99,7 +99,14 @@ class PermissionsRepository
                 $main = null;
                 $moduleData = json_decode(Storage::get($file));
                 $main = $moduleData->main;
-                if(isset($moduleData->roles) && in_array($this->role,$moduleData->roles)) {
+                $userRoles = [$this->role];
+                if($this->user->roles){
+                    $userRoles = [];
+                    foreach ($this->user->roles as $role){
+                        $userRoles[] = $role->role;
+                    }
+                }
+                if(isset($moduleData->roles) && count(array_intersect($userRoles,$moduleData->roles))) {
                     $res = $this->getModuleUrls($moduleData,$main);
                     $urls = $res['urls'];
                     $children = $res['children'];
