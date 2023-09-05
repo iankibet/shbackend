@@ -79,7 +79,7 @@ class PermissionsRepository
         }
         return $allQlMutations;
     }
-
+    protected $userRoles = [];
     public function backupPermisions($role = null){
         $isWriting = Cache::get('permissionsUpdated',false);
         if($isWriting)
@@ -92,6 +92,7 @@ class PermissionsRepository
                 $userRoles[] = $role->role;
             }
         }
+        $this->userRoles = $userRoles;
         try{
             if($role){
                 $this->role = $role;
@@ -135,7 +136,7 @@ class PermissionsRepository
 
     protected function workOnchildren($children,$main,$module){
         foreach ($children as $slug=>$child){
-            if(isset($child->roles) && in_array($this->role,$child->roles)) {
+            if(isset($child->roles) && count(array_intersect($this->userRoles,$child->roles))) {
                 $slug = $module.'.'.$slug;
 //                if($slug == 'orders.orders.get_self_order'){
 //                    dd($realMain,$main,$child,$res);
