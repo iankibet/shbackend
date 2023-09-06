@@ -15,6 +15,15 @@ class PermissionsRepository
         if($this->user){
             $this->role = $this->user->role;
             $this->cache_name = 'permissions/'.$this->role.'_cache.json';
+            $userRoles = [$this->role];
+            if($this->user && isset($this->user->roles)){
+                $userRoles = [];
+                foreach ($this->user->roles as $role){
+                    $userRoles[] = $role->role;
+                }
+            }
+            $this->userRoles = $userRoles;
+            $this->cache_name = 'permissions/'.implode('_',$userRoles).'_cache.json';
         }
     }
 
