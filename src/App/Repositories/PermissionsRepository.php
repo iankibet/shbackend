@@ -15,12 +15,14 @@ class PermissionsRepository
         if($this->user){
             $this->role = $this->user->role;
             $this->cache_name = 'permissions/'.$this->role.'_cache.json';
-            $userRoles = [$this->role];
             if($this->user && isset($this->user->roles)){
                 $userRoles = [];
                 foreach ($this->user->roles as $role){
                     $userRoles[] = $role->role;
                 }
+            }
+            if(!count($userRoles)){
+                $userRoles = [$this->role];
             }
             $this->userRoles = $userRoles;
             $this->cache_name = 'permissions/'.implode('_',$userRoles).'_cache.json';
@@ -94,12 +96,14 @@ class PermissionsRepository
         if($isWriting)
             return;
         Cache::put('permissionsUpdated',now()->timestamp);
-        $userRoles = [$this->role];
         if($this->user && isset($this->user->roles)){
             $userRoles = [];
             foreach ($this->user->roles as $role){
                 $userRoles[] = $role->role;
             }
+        }
+        if(!count($userRoles)){
+            $userRoles = [$this->role];
         }
         $this->userRoles = $userRoles;
         try{
@@ -116,7 +120,6 @@ class PermissionsRepository
                 $main = null;
                 $moduleData = json_decode(Storage::get($file));
                 $main = $moduleData->main;
-
                 if(isset($moduleData->roles) && count(array_intersect($userRoles,$moduleData->roles))) {
                     $res = $this->getModuleUrls($moduleData,$main);
                     $urls = $res['urls'];
