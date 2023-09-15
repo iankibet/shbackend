@@ -41,7 +41,7 @@ class SearchRepo
                 foreach($request_data['keys'] as $key){
                     if(!strpos($key,'.') && $request_data['base_table'] != null)
                         $key = $request_data['base_table'].'.'.$key;
-                    if($request_data['exact']){
+                    if(isset($request_data['exact']) && ($request_data['exact'] == 'true' || $request_data['exact'] === true)){
                         if($index == 0){
                             $query->where([
                                 [$key,'like',$value]
