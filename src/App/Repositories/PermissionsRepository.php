@@ -12,11 +12,10 @@ class PermissionsRepository
     {
         $this->filesPath = 'permissions/modules';
         $this->user = request()->user();
+        $userRoles = [];
         if($this->user){
             $this->role = $this->user->role;
-            $this->cache_name = 'permissions/'.$this->role.'_cache.json';
-            if($this->user && isset($this->user->roles)){
-                $userRoles = [];
+            if(isset($this->user->roles)){
                 foreach ($this->user->roles as $role){
                     $userRoles[] = $role->role;
                 }
@@ -96,8 +95,8 @@ class PermissionsRepository
         if($isWriting)
             return;
         Cache::put('permissionsUpdated',now()->timestamp);
+        $userRoles = [];
         if($this->user && isset($this->user->roles)){
-            $userRoles = [];
             foreach ($this->user->roles as $role){
                 $userRoles[] = $role->role;
             }
