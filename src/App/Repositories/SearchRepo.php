@@ -41,15 +41,28 @@ class SearchRepo
                 foreach($request_data['keys'] as $key){
                     if(!strpos($key,'.') && $request_data['base_table'] != null)
                         $key = $request_data['base_table'].'.'.$key;
-                    if($index == 0){
-                        $query->where([
-                            [$key,'like','%'.$value.'%']
-                        ]);
-                    }else{
-                        $query->orWhere([
-                            [$key,'like','%'.$value.'%']
-                        ]);
+                    if($request_data['exact']){
+                        if($index == 0){
+                            $query->where([
+                                [$key,'like',$value]
+                            ]);
+                        }else{
+                            $query->orWhere([
+                                [$key,'like',$value]
+                            ]);
+                        }
+                    } else {
+                        if($index == 0){
+                            $query->where([
+                                [$key,'like','%'.$value.'%']
+                            ]);
+                        }else{
+                            $query->orWhere([
+                                [$key,'like','%'.$value.'%']
+                            ]);
+                        }
                     }
+
                     $index++;
                 }
 
