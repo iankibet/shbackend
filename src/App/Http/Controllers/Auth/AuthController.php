@@ -84,7 +84,7 @@ class AuthController extends Controller
     public function resetPassword(Request $request){
         $data = \request()->all();
         $valid = Validator::make($data,[
-            'email'=>'required|email',
+            'old_password'=>'required',
             'new_password'=>'required|confirmed'
         ]);
         if (count($valid->errors())) {
@@ -93,25 +93,20 @@ class AuthController extends Controller
                 'errors' => $valid->errors()
             ], 422);
         }
-        $credentials =  $request->only('email', 'token');
-        if (is_null($user = $this->broker()->getUser($credentials))) {
+        $user = \request()->user();
+        if(!Hash::check(\request('old_password'),$user->password)){
             return response([
                 'status' => 'failed',
-                'errors' => ['email'=>[trans(Password::INVALID_USER)]]
+                'errors' => ['old_password'=>['Old password incorrect']]
             ], 422);
         }
-        if (! $this->broker()->tokenExists($user, $credentials['token'])) {
-            return response([
-                'status' => 'failed',
-                'errors' => ['email'=>[trans(Password::INVALID_TOKEN)]]
-            ], 422);
-        }
-        $user->password = Hash::make(\request('new_password'));
+        $new_password = request('new_password');
+        $user->password = Hash::make($new_password);
         $user->update();
-        return [
+        return response([
             'status'=>'success',
-            'message'=>'Password updated'
-        ];
+            'message'=>'password updated successfully'
+        ]);
     }
     public function broker()
     {
@@ -264,6 +259,28 @@ class AuthController extends Controller
         $user->currentAccessToken()->delete();
         return [
             'status'=>'success'
+        ];
+    }
+    public function uploadProfilePicture(){
+        $user = \request()->user();
+        $data = \request()->all();
+        $valid = Validator::make($data,[
+            'profile_picture'=>'required|image'
+        ]);
+        if (count($valid->errors())) {
+            return response([
+                'status' => 'failed',
+                'errors' => $valid->errors()
+            ], 422);
+        }
+        $profile_picture = \request('profile_picture');
+        $profile_picture_name = $user->id.'_'.time().'.'.$profile_picture->getClientOriginalExtension();
+        $profile_picture->move(public_path('profile_pictures'),$profile_picture_name);
+        $user->profile_picture = $profile_picture_name;
+        $user->update();
+        return [
+            'status'=>'success',
+            'user'=>$user
         ];
     }
 }

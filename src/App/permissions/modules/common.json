@@ -15,6 +15,8 @@
     "/auth/request-otp",
     "/auth/verify-otp",
     "/user/apikeys/list",
-    "/auth/logout"
+    "/auth/logout",
+     "/auth/reset",
+      "/auth/profile-picture"
   ]
 }
