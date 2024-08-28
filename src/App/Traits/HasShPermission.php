@@ -27,7 +27,7 @@ trait HasShPermission
         }
     }
 
-    public function isAllowed($permission): bool
+    public function isAllowedTo($permission): bool
     {
         if(!$this->shPermissions) {
             $this->setShPermissions();
