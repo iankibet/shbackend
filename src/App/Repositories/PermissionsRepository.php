@@ -105,23 +105,23 @@ class PermissionsRepository
             $userRoles = [$this->role];
         }
         $this->userRoles = $userRoles;
-        try{
-            if($role){
-                $this->role = $role;
-                $this->cache_name = 'permissions/'.implode('_',$userRoles).'_cache.json';
-            }
-            $files = Storage::files($this->filesPath);
-            $permissions = [];
-            foreach ($files as $file){
-                $arr = explode('/',$file);
-                $module = str_replace('.json','',$arr[count($arr) - 1]);
-                $hasChildren = true;
-                $main = null;
-                $moduleData = json_decode(Storage::get($file));
-                $main = $moduleData->main;
-                if(isset($moduleData->roles) && count(array_intersect($userRoles,$moduleData->roles))) {
+//        try{
+        if($role){
+            $this->role = $role;
+            $this->cache_name = 'permissions/'.implode('_',$userRoles).'_cache.json';
+        }
+        $files = Storage::files($this->filesPath);
+        $permissions = [];
+        foreach ($files as $file){
+            $arr = explode('/',$file);
+            $module = str_replace('.json','',$arr[count($arr) - 1]);
+            $hasChildren = true;
+            $main = null;
+            $moduleData = json_decode(Storage::get($file));
+            if(isset($moduleData->roles) && count(array_intersect($userRoles,$moduleData->roles))) {
+                if(isset($moduleData->main)){
+                    $main = $moduleData->main;
                     $res = $this->getModuleUrls($moduleData,$main);
-                    $urls = $res['urls'];
                     $children = $res['children'];
                     $this->permissions[$module] = [
                         'urls'=>$res['urls'],
@@ -135,13 +135,15 @@ class PermissionsRepository
                         $this->workOnchildren($children,$main,$module);
                     }
                 }
+
             }
-            Cache::put($this->cache_name, $this->permissions);
-            Cache::forget('permissionsUpdated');
-        }catch (\Exception $exception) {
-            Cache::forget('permissionsUpdated');
-            throw new \Exception($exception->getMessage());
         }
+        Cache::put($this->cache_name, $this->permissions);
+        Cache::forget('permissionsUpdated');
+//        }catch (\Exception $exception) {
+//            Cache::forget('permissionsUpdated');
+//            throw new \Exception($exception->getMessage());
+//        }
 
     }
 
@@ -152,6 +154,9 @@ class PermissionsRepository
 //                if($slug == 'orders.orders.get_self_order'){
 //                    dd($realMain,$main,$child,$res);
 //                }
+                if(!isset($child->main)){
+                    $child->main = '';
+                }
                 $realMain = $child->main;
                 $realMain2 = $child->main;
                 if(!str_starts_with($realMain,'/') && $main){
