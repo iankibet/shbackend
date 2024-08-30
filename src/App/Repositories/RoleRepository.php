@@ -148,8 +148,14 @@ class RoleRepository
             $foundUrls = array_merge($foundUrls, $extractedUrls);
         }
         $urls = array_merge($urls, $foundUrls);
+        if(!isset($block->main)){
+            $block->main = '';
+        }
         if (isset($block->children)) {
             foreach ($block->children as $childSlug => $child) {
+                if(!isset($child->main)){
+                    $child->main = '';
+                }
                 if (substr($child->main, 0, 1) == '/') {
                     $childrenMain = trim($child->main, '/');
                 } else {
