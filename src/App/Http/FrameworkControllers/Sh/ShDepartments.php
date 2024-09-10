@@ -19,20 +19,16 @@ class ShDepartments extends Controller
     {
         $this->api_model = Department::class;
     }
-    public function storeDepartment($id=0){
+    public function storeDepartment(){
+        \request()->validate([
+            'name'=>'required',
+            'description'=>'required'
+        ]);
+        $id = \request('id');
         $data = \request()->all();
-        $valid = Validator::make($data,ShRepository::getValidationFields($this->api_model));
-        if (count($valid->errors())) {
-            return response([
-                'status' => 'failed',
-                'errors' => $valid->errors()
-            ], 422);
-        }
-        $data['form_model'] = encrypt($this->api_model);
-        $department = $this->autoSaveModel($data);
-        if($id){
-            $data['id'] = $id;
-        }
+       $department = Department::findOrNew($id);
+        $department->fill($data);
+        $department->save();
         if(isset($data['id']) && $data['id'] > 0) {
             ShRepository::storeLog('updated_department',"Updated department # $department->id $department->name", $department);
         } else {
