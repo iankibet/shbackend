@@ -3,18 +3,6 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Core\AgentListing;
-use App\Models\Core\Company;
-use App\Models\Core\DepartmentPermission;
-use App\Models\Core\HouseRequest;
-use App\Models\Core\InterestedRequest;
-use App\Models\Core\Property;
-use App\Models\Core\RequiredDocument;
-use App\Models\Core\UploadedDocument;
-use App\Models\User;
-use App\Notifications\InviteMember;
-use App\Notifications\SendSms;
-use App\Notifications\verifyPhone;
 use Iankibet\Shbackend\App\Repositories\RoleRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

@@ -49,14 +49,15 @@ class Initialize extends Command
 //            $this->info("Exists already!");
 //        }
         $this->warn("Copying models and controllers");
-//        $controllers_dir = app_path('Http/Controllers');
+        $controllers_dir = app_path('Http/Controllers');
+        if(!file_exists($controllers_dir.'/Api')){
+            mkdir($controllers_dir.'/Api');
+            $command = 'cp -r '.__DIR__.'/../Http/Controllers/* '.$controllers_dir.'/Api/';
+            exec($command);
+            $this->info('Created api controller directory');
+        }
+
         $app_dir = app_path();
-//        if(!file_exists($controllers_dir.'/Api')){
-//            mkdir($controllers_dir.'/Api');
-//            $command = 'cp -r '.__DIR__.'/../Http/Controllers/* '.$controllers_dir.'/Api/';
-//            exec($command);
-//            $this->info('Created api controller directory');
-//        }
         if(!file_exists($app_dir.'/Models/Core/Department.php')){
             $command2 = 'cp -r '.__DIR__.'/../../templates/Models/Core '.$app_dir.'/Models/';
             exec($command2);
