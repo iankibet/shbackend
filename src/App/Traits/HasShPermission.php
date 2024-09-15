@@ -25,7 +25,9 @@ trait HasShPermission
                 $permissions = collect($permissions)->map(function($permission) use ($module) {
                     return $module . '.' . $permission;
                 });
-                $this->shPermissions[$slug] = $permissions->toArray();
+                $permissions = $permissions->toArray();
+                $permissions[] = $module;
+                $this->shPermissions[$slug] = $permissions;
             }
         }
     }
