@@ -96,11 +96,12 @@ class AutoGenerateModel extends Command
         ]);
         $model_path = app_path("Models/".$this->real_model.'.php');
         $model_content = file_get_contents($model_path);
-        $model_array = explode('use HasFactory;',$model_content);
+        $model_array = explode('//',$model_content);
         $pre_model_content = $model_array[0];
         $post_model_content = $model_array[1];
+        // removed use factoru
         $this->model_fields = '"'.implode('","',$this->plain_fields).'"';
-        $current_model_content = "\n\tuse HasFactory;\n\t".'protected $fillable = ['.$this->model_fields.'];'."\n";
+        $current_model_content = "\n\t".'protected $fillable = ['.$this->model_fields.'];'."\n";
         $new_model_contents = $pre_model_content.$current_model_content.$post_model_content;
         file_put_contents($model_path,$new_model_contents);
     }
