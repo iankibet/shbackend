@@ -52,12 +52,7 @@ class AutoGenerateModel extends Command
     {
         $model_name = $this->argument('model_name');
         $this->model_name = $model_name;
-        $model_namespace = $this->ask("What is the model namespace?","Core");
-        if(!$model_namespace){
-            $model_namespace = "Core";
-        }
-        $real_model = $model_namespace."/".$model_name;
-        $this->real_model = $real_model;
+        $this->real_model = $model_name;
         $plain_fields = [];
         $fields = [];
         $add_more = 1;
