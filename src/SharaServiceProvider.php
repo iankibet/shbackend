@@ -4,6 +4,8 @@ namespace Iankibet\Shbackend;
 
 use Iankibet\Shbackend\App\Commands\CacheData;
 use Iankibet\Shbackend\App\Commands\CachePermissions;
+use Iankibet\Shbackend\App\Repositories\SearchRepo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 
@@ -35,6 +37,10 @@ class SharaServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Builder::macro('tableResponse', function ($searchKeys = null) {
+            /** @var Builder $this */
+            return SearchRepo::of($this,$searchKeys)->response();
+        });
         if ($this->app->runningInConsole()) {
             $this->commands([
                 AutoGenerateModel::class,
