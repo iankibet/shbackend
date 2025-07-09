@@ -72,7 +72,7 @@ class SearchRepo
         if(isset($request_data['order_by']) && isset($request_data['order_method'])){
             $model = $model->orderBy($request_data['order_by'],$request_data['order_method']);
         }else{
-            $model = $model->orderBy($base_tbl.'.created_at','desc');
+            $model = $model->orderBy($base_tbl.'.id','desc');
         }
 
         if(isset($request_data['all'])){
