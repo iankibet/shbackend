@@ -104,7 +104,11 @@ class AutoGenerateModel extends Command
     protected function updateMigrationFields(){
         $migration_dir = base_path('database/migrations');
         $migrations = scandir($migration_dir);
-        $migration = $migration_dir.'/'.$migrations[count($migrations)-1];
+        $migration = collect($migrations)->filter(function($migration){
+            // should end with .php
+            return Str::endsWith($migration, '.php');
+        })->last();
+        $migration = $migration_dir.'/'.$migration;
         $migration_contents = file_get_contents($migration);
         $migration_arr = explode('$table->id();'."\n",$migration_contents);
         $pre_migration_content = $migration_arr[0];
