@@ -25,6 +25,14 @@ class ShDepartmentController extends Controller
     public function listAllModules($role,$id){
         $department = Department::find($id);
         $modules = RoleRepository::getRolePermissions($role,true);
+        $cleanModules = [];
+        foreach ($modules as $module){
+            $adminPermissions = RoleRepository::getModulePermissions('admin',$module);
+            if(count($adminPermissions) > 0){
+                $cleanModules[] = $module;
+            }
+        }
+        $modules = $cleanModules;
         $commonIndex = array_search('common',$modules,true);
         if($commonIndex !== false){
             unset($modules[$commonIndex]);
