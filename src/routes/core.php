@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::group(['middleware' => ['api'], 'prefix'=>'api'], function () {
+    Route::get('sh-country-code',[\Iankibet\Shbackend\App\Http\Controllers\CountriesController::class,'getCountryCode']);
     $apiAuthController = \App\Http\Controllers\Api\Auth\AuthController::class;
     Route::post('auth/login',[$apiAuthController,'login']);
     Route::post('auth/reset',[$apiAuthController,'resetPassword']);
