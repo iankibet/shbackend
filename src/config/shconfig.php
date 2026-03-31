@@ -4,9 +4,7 @@ return [
     'api_middleware'=>env('SH_API_MIDDLEWARE','auth:sanctum'),
     'route_overrides' => [
         'sh_departments' => [
-            'department' => [
-                'controller' => null,
-            ],
+            'departments_controller' => null,
         ],
     ],
 ];

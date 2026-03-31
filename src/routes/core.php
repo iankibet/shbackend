@@ -41,7 +41,7 @@ Route::group(['middleware' => $middleWares, 'prefix'=>'api'], function () {
     Route::get('sh-departments/all-permissions',[$departmentsController,'allPermissions']);
 
     $departmentController = Iankibet\Shbackend\App\Http\FrameworkControllers\Sh\Department\ShDepartmentController::class;
-    $departmentPermissionsController = config('shconfig.route_overrides.sh_departments.department.controller', $departmentController);
+    $departmentPermissionsController = config('shconfig.route_overrides.sh_departments.departments_controller', $departmentController);
     Route::get('/sh-departments/department/list-modules/{id}',[$departmentController,'listModules']);
     Route::post('/sh-departments/department/add-module/{id}',[$departmentController,'addModule']);
     Route::post('/sh-departments/department/permissions/{id}',[$departmentController,'setModulePermissions']);
