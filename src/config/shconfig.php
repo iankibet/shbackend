@@ -5,7 +5,7 @@ return [
     'route_overrides' => [
         'sh_departments' => [
             'department' => [
-                'use_app_routes' => false,
+                'controller' => null,
             ],
         ],
     ],
