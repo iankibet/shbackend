@@ -5,8 +5,7 @@ return [
     'route_overrides' => [
         'sh_departments' => [
             'department' => [
-                'list_all_modules' => null,
-                'get_module_permissions' => null,
+                'use_app_routes' => false,
             ],
         ],
     ],

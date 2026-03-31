@@ -41,15 +41,16 @@ Route::group(['middleware' => $middleWares, 'prefix'=>'api'], function () {
     Route::get('sh-departments/all-permissions',[$departmentsController,'allPermissions']);
 
     $departmentController = Iankibet\Shbackend\App\Http\FrameworkControllers\Sh\Department\ShDepartmentController::class;
-    $listAllModulesAction = config('shconfig.route_overrides.sh_departments.department.list_all_modules', [$departmentController,'listAllModules']);
-    $getModulePermissionsAction = config('shconfig.route_overrides.sh_departments.department.get_module_permissions', [$departmentController,'getModulePermissions']);
+    $useAppDepartmentRoutes = (bool) config('shconfig.route_overrides.sh_departments.department.use_app_routes', false);
     Route::get('/sh-departments/department/list-modules/{id}',[$departmentController,'listModules']);
     Route::post('/sh-departments/department/add-module/{id}',[$departmentController,'addModule']);
     Route::post('/sh-departments/department/permissions/{id}',[$departmentController,'setModulePermissions']);
     Route::post('/sh-departments/department/permissions/{id}/{module}',[$departmentController,'updateModulePermissionsWithSlug']);
     Route::get('/sh-departments/department/list-pending-modules/{id}',[$departmentController,'listPendingModules']);
-    Route::get('/sh-departments/department/list-all-modules/{role}/{id}', $listAllModulesAction);
-    Route::get('/sh-departments/department/get-module-permissions/{module}', $getModulePermissionsAction);
+    if (!$useAppDepartmentRoutes) {
+        Route::get('/sh-departments/department/list-all-modules/{role}/{id}',[$departmentController,'listAllModules']);
+        Route::get('/sh-departments/department/get-module-permissions/{module}',[$departmentController,'getModulePermissions']);
+    }
     Route::post('/sh-departments/department/delete-department/{module}',[$departmentController,'removeModulePermissions']);
 
     $routes_path = base_path('routes/api');
