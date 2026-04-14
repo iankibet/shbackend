@@ -14,21 +14,12 @@ trait HasShPermission
      */
     protected function setShPermissions($slug = null): void
     {
-        if($this->role != 'admin'){
+        if (!RoleRepository::isDepartmentScopedUser($this)) {
             $this->shPermissions[$slug] = RoleRepository::getRolePermissions($this->role);
         } else {
-            $arr = explode('.',$slug);
+            $arr = explode('.', $slug);
             $module = $arr[0];
-            $modulePermissions = DepartmentPermission::query()->where('department_id',$this->department_id)->where('module',$module)->first();
-            if($modulePermissions){
-                $permissions = json_decode($modulePermissions->permissions);
-                $permissions = collect($permissions)->map(function($permission) use ($module) {
-                    return $module . '.' . $permission;
-                });
-                $permissions = $permissions->toArray();
-                $permissions[] = $module;
-                $this->shPermissions[$slug] = $permissions;
-            }
+            $this->shPermissions[$slug] = RoleRepository::getDepartmentModulePermissions($this->department_id, $module);
         }
     }
 

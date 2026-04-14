@@ -54,25 +54,8 @@ class RoleRepository
         $user = $this->user;
         $role = $user->role;
         $urls = [];
-        if ($role == 'admin') {
-            $allowed_permissions = [];
-            if ($user->department) {
-                $modules = DepartmentPermission::where('department_id', $user->department_id)->get();
-                foreach ($modules as $module) {
-//                    $urls = @json_decode($module->urls);
-//                    if($urls){
-//                        $allowed_urls = array_merge($allowed_urls,$urls);
-//                    }
-                    $slugs = @json_decode($module->permissions);
-                    if ($slugs) {
-                        $permissions[] = $module->module;
-                        foreach ($slugs as $slug) {
-                            $permissions[] = $module->module . '.' . $slug;
-                        }
-                    }
-                }
-                $allowed_permissions = json_decode($user->department->permissions);
-            }
+        if (self::isDepartmentScopedUser($user)) {
+            $allowed_permissions = self::getDepartmentPermissions($user->department_id);
         } else {
             $allowed_permissions = self::getRolePermissions($user->role);
         }
@@ -206,6 +189,61 @@ class RoleRepository
         return $slugs;
     }
 
+    public static function isDepartmentScopedUser($user): bool
+    {
+        return (bool) ($user && in_array($user->role, ['admin', 'super_admin'], true));
+    }
+
+    public static function getDepartmentPermissions($departmentId): array
+    {
+        if (!$departmentId) {
+            return [];
+        }
+
+        $permissions = [];
+        $modules = DepartmentPermission::query()->where('department_id', $departmentId)->get();
+
+        foreach ($modules as $module) {
+            $mainModule = $module->module;
+            $permissions[] = $mainModule;
+
+            $modulePermissions = json_decode($module->permissions, true) ?: [];
+            foreach ($modulePermissions as $modulePermission) {
+                if ($modulePermission !== $mainModule) {
+                    $permissions[] = $mainModule . '.' . $modulePermission;
+                }
+            }
+        }
+
+        return array_values(array_unique($permissions));
+    }
+
+    public static function getDepartmentModulePermissions($departmentId, $module): array
+    {
+        if (!$departmentId || !$module) {
+            return [];
+        }
+
+        $modulePermissions = DepartmentPermission::query()
+            ->where('department_id', $departmentId)
+            ->where('module', $module)
+            ->first();
+
+        if (!$modulePermissions) {
+            return [];
+        }
+
+        $permissions = collect(json_decode($modulePermissions->permissions, true) ?: [])
+            ->map(function ($permission) use ($module) {
+                return $module . '.' . $permission;
+            })
+            ->toArray();
+
+        $permissions[] = $module;
+
+        return array_values(array_unique($permissions));
+    }
+
     public static function getModulePermissions($role, $reqModule)
     {
         $menus = null;
@@ -286,22 +324,8 @@ class RoleRepository
         $allowed_urls = session()->get('allowed_urls', []);
         $permissions = session()->get('permissions', []);
         $user = $this->user;
-        $role = $user->role;
-        if ($role == 'admin') {
-            $modules = DepartmentPermission::where('department_id', $user->department_id)->get();
-            foreach ($modules as $module) {
-                $urls = @json_decode($module->urls);
-                if ($urls) {
-                    $allowed_urls = array_merge($allowed_urls, $urls);
-                }
-                $slugs = @json_decode($module->permissions);
-                if ($slugs) {
-                    $permissions[] = $module->module;
-                    foreach ($slugs as $slug) {
-                        $permissions[] = $module->module . '.' . $slug;
-                    }
-                }
-            }
+        if (self::isDepartmentScopedUser($user)) {
+            $permissions = array_merge($permissions, self::getDepartmentPermissions($user->department_id));
             $allowed_urls = $permissionsRepo->getAllowedUrls($permissions);
         } else {
             $allowed_urls = $permissionsRepo->getAllowedUrls();
@@ -313,18 +337,8 @@ class RoleRepository
     {
         $permissionsRepo = new PermissionsRepository();
         $user = $this->user;
-        $role = $user->role;
-        if ($role == 'admin') {
-            $modules = DepartmentPermission::where('department_id', $user->department_id)->get();
-            foreach ($modules as $module) {
-                $slugs = @json_decode($module->permissions);
-                if ($slugs) {
-                    $permissions[] = $module->module;
-                    foreach ($slugs as $slug) {
-                        $permissions[] = $module->module . '.' . $slug;
-                    }
-                }
-            }
+        if (self::isDepartmentScopedUser($user)) {
+            $permissions = self::getDepartmentPermissions($user->department_id);
             $allowedQlQueries = $permissionsRepo->getAllowedQlQueries($permissions);
         } else {
             $allowedQlQueries = $permissionsRepo->getAllowedQlQueries();
