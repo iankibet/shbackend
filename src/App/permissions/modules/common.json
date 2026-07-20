@@ -1,6 +1,6 @@
 {
   "main": "/auth",
-  "roles": ["member","admin"],
+  "roles": ["member","admin","super_admin"],
   "urls": [
     "/files/tmp",
     "/auth/freetier",
